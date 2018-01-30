@@ -1,4 +1,11 @@
-# Module Okom3pom VIP !
+# Module VIP Card for Prestashop 1.6.X.X
+
+Simple module pour gérer des cartes VIP, il est basé sur deux règles de paniers
+
+Une sur un produit ( la carte VIP )
+L'autre sur un Groupe VIP
+
+Quand le client achète une carte VIP et que la commande passe dans un statut souhaité, le client passe automatiquement dans le Groupe VIP pour 365 jours. 
 
 
 ## Créer un produit Carte VIP
@@ -36,5 +43,8 @@ class Customer extends CustomerCore
 
 ## Configuration du Module
 
-Ajouter l'id product de l'article carte VIP
-Ajouter l'id group pour la carte VIPokom_vip
+Ajouter l'id product de l'article : carte VIP
+
+Ajouter l'id group Client VIP
+
+Ajouter l'id_order_state qui passera vos clients dans le Groupe VIP
