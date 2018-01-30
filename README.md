@@ -31,8 +31,8 @@ class Customer extends CustomerCore
 
     public function __construct($id = null)
     {        
-		Customer::$definition['fields']['vip_add'] =  array('type' => self::TYPE_DATE,'copy_post' => false);
-		Customer::$definition['fields']['vip_end'] =  array('type' => self::TYPE_DATE,'copy_post' => false);	
+        Customer::$definition['fields']['vip_add'] =  array('type' => self::TYPE_DATE,'copy_post' => false);
+        Customer::$definition['fields']['vip_end'] =  array('type' => self::TYPE_DATE,'copy_post' => false);	
         parent::__construct($id);
     }	
 	
