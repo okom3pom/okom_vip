@@ -1,4 +1,4 @@
-Module Okom3pom VIP !
+# Module Okom3pom VIP !
 
 
 ## Créer un produit Carte VIP
@@ -15,6 +15,7 @@ Ajouter une règle de panier avec comme condition l'id groupe de la Carte VIP et
 
 Vous devez ajouter un override à la Class Customer :
 
+`
 <?
 class Customer extends CustomerCore
 {
@@ -32,6 +33,8 @@ class Customer extends CustomerCore
 
 
 }
+?>
+`
 
 ## Configuration du Module
 
