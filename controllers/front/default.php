@@ -9,14 +9,13 @@
  * @author    SARL Rouage communication <contact@okom3pom.com>
  * @copyright 2008-2018 Rouage Communication SARL
  * @version   1.0.0
- * @license   Private
+ * @license   Free
  */
 
 include_once(dirname(__FILE__).'/../../okom_vip.php');
 
 class okom_vipDefaultModuleFrontController extends ModuleFrontController
 {
-
     public function initContent()
     {
         parent::initContent();

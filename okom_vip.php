@@ -9,7 +9,7 @@
  * @author    SARL Rouage communication <contact@okom3pom.com>
  * @copyright 2008-2018 Rouage Communication SARL
  * @version   1.0.0
- * @license   Private
+ * @license   Free
  */
 
 if (!defined('_PS_VERSION_')) {
@@ -99,7 +99,7 @@ class okom_vip extends Module
             $old_vip_cards = Db::getInstance()->ExecuteS($sql);
             
             foreach ($old_vip_cards as $old_vip_card) {
-                return Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$old_vip_card['id_customer'].' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
+                Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$old_vip_card['id_customer'].' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
             }
             Configuration::updateValue('OKOM_VIP_CLEAN', date('Y-m-d H:i:00'));
         }
@@ -215,7 +215,8 @@ class okom_vip extends Module
                                 <div class="panel" id="news">
                                     <div class="panel-heading"><i class="icon-cogs"></i> '.$this->l('Last Clean old VIP card').'</div>
                                         <div class="row">
-                                            '.$this->l('Last time you removed old VIP cards is : ').Configuration::get('OKOM_VIP_CLEAN').'
+                                            '.$this->l('Last time you removed old VIP cards is : ').Configuration::get('OKOM_VIP_CLEAN').'<br/><br/>
+                                            '.$this->l('Url for cron task : ')._PS_BASE_URL_SSL_. _MODULE_DIR_ .'okom_vip/cron.php?token='.Tools::encrypt('okom_vip').' 
                                         </div>    
                                     </div>          
                             </div>                          
