@@ -216,7 +216,7 @@ class okom_vip extends Module
                                     <div class="panel-heading"><i class="icon-cogs"></i> '.$this->l('Last Clean old VIP card').'</div>
                                         <div class="row">
                                             '.$this->l('Last time you removed old VIP cards is : ').Configuration::get('OKOM_VIP_CLEAN').'<br/><br/>
-                                            '.$this->l('Url for cron task : ')._PS_BASE_URL_SSL_. _MODULE_DIR_ .'okom_vip/cron.php?token='.Tools::encrypt('okom_vip').' 
+                                            '.$this->l('Url for cron task : ')._PS_BASE_URL_SSL_. _MODULE_DIR_ .'okom_vip/cron.php?token='.$this->secure_key.' 
                                         </div>    
                                     </div>          
                             </div>                          
