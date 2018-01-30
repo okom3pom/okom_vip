@@ -101,7 +101,7 @@ class okom_vip extends Module
             foreach ($old_vip_cards as $old_vip_card) {
                 return Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$old_vip_card['id_customer'].' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
             }
-            Configuration::updateValue('OKOM_VIP_CLEAN', date('Y-m-d'));
+            Configuration::updateValue('OKOM_VIP_CLEAN', date('Y-m-d H:i:00'));
         }
         $this->_html .= $this->displayConfirmation($this->l('Settings updated'));
     }
@@ -208,9 +208,23 @@ class okom_vip extends Module
         } else {
             $this->_html .= '<br />';
         }
-          
-           $this->_html .= $this->renderForm();
-           return $this->_html;
+
+
+        $this->_html .= '<div class="row">
+                            <div class="col-lg-12">
+                                <div class="panel" id="news">
+                                    <div class="panel-heading"><i class="icon-cogs"></i> '.$this->l('Last Clean old VIP card').'</div>
+                                        <div class="row">
+                                            '.$this->l('Last time you removed old VIP cards is : ').Configuration::get('OKOM_VIP_CLEAN').'
+                                        </div>    
+                                    </div>          
+                            </div>                          
+                        </div>';
+
+
+        $this->_html .= $this->renderForm();
+
+        return $this->_html;
     }
 
     public function hookactionOrderStatusUpdate($params)
@@ -240,7 +254,7 @@ class okom_vip extends Module
                 if ($product['product_id'] == $id_product_vip) {
                     $customer->addGroups($id_group_vip);
                     $customer->vip_add = date('Y-m-d');
-                    $customer->vip_end = date('Y-m-d', strtotime(date('Y-m-d').' + 365 DAY'));
+                    $customer->vip_end = date('Y-m-d', strtotime(date('Y-m-d H:i:00').' + 365 DAY'));
                     $customer->update();
                 }
             }
