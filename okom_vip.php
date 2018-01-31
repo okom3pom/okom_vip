@@ -8,7 +8,7 @@
  *
  * @author    SARL Rouage communication <contact@okom3pom.com>
  * @copyright 2008-2018 Rouage Communication SARL
- * @version   1.0.1
+ * @version   1.0.2
  * @license   Free
  */
 
@@ -29,6 +29,7 @@ class okom_vip extends Module
         $this->version = '1.0.1';
         $this->secure_key = Tools::encrypt($this->name);
         $this->bootstrap = true;
+        $this->table_name = 'vip';
 
         parent::__construct();
 
@@ -36,17 +37,35 @@ class okom_vip extends Module
         $this->description = $this->l('Automatisation pour les cartes VIP selon un id_produit.');
     }
 
+    private function _installTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.$this->table_name.'` (
+                `id_vip` INT(12) NOT NULL AUTO_INCREMENT,
+                `id_customer` INT (12) NOT NULL,
+                `vip_add` DATETIME NOT NULL,
+                `vip_end` DATETIME NOT NULL,
+                PRIMARY KEY (`id_vip`)
+                ) ENGINE ='._MYSQL_ENGINE_ .' DEFAULT CHARSET=utf8';
+        if (!Db::getInstance()->Execute($sql)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public function install()
     {
         $sql = 'ALTER TABLE `'._DB_PREFIX_.'customer` ADD `vip_add` DATETIME NOT NULL AFTER `date_upd`, ADD `vip_end` DATETIME NOT NULL AFTER `vip_add`;';
+        // || !$this->_installTable()
         if (!parent::install()
+            || !Db::getInstance()->Execute($sql)
             || !$this->registerHook('displayAdminOrderLeft')
             || !$this->registerHook('actionOrderStatusUpdate')
             || !$this->registerHook('customerAccount')
-            || !Db::getInstance()->Execute($sql)
             || !Configuration::updateValue('OKOM_VIP_IDGROUP', '')
             || !Configuration::updateValue('OKOM_VIP_IDORDERSTATE', '')
             || !Configuration::updateValue('OKOM_VIP_CLEAN', date('Y-m-d'))
+            || !Configuration::updateValue('OKOM_VIP_NB_DAY', 365)
             || !Configuration::updateValue('OKOM_VIP_IDPRODUCT', '') ) {
             return false;
         }
@@ -90,6 +109,7 @@ class okom_vip extends Module
             Configuration::updateValue('OKOM_VIP_IDPRODUCT', (int)Tools::getValue('OKOM_VIP_IDPRODUCT'));
             Configuration::updateValue('OKOM_VIP_IDGROUP', (int)Tools::getValue('OKOM_VIP_IDGROUP'));
             Configuration::updateValue('OKOM_VIP_IDORDERSTATE', (int)Tools::getValue('OKOM_VIP_IDORDERSTATE'));
+            Configuration::updateValue('OKOM_VIP_NB_DAY', (int)Tools::getValue('OKOM_VIP_NB_DAY'));
         }
         // Clean Old Vip Card
         if (Tools::isSubmit('clean')) {
@@ -116,24 +136,31 @@ class okom_vip extends Module
                 'input' => array(
                     array(
                         'type' => 'text',
-                        'label' => $this->l('Id product VIP Card'),
+                        'label' => $this->l('Id product'),
                         'name' => 'OKOM_VIP_IDPRODUCT',
                         'size' => 20,
-                        'desc' => $this->l('Choose an id_product for the VIP CARD'),
+                        'desc' => $this->l('Choose an id_product of the VIP CARD'),
                     ),
                     array(
                         'type' => 'text',
-                        'label' => $this->l('Id group VIP Card'),
+                        'label' => $this->l('Id group'),
                         'name' => 'OKOM_VIP_IDGROUP',
                         'size' => 20,
-                        'desc' => $this->l('Choose an id_product for the VIP CARD'),
+                        'desc' => $this->l('Choose id_group of the VIP Card Group'),
                     ),
                     array(
                         'type' => 'text',
-                        'label' => $this->l('Id order state to set customer in VIP Group'),
+                        'label' => $this->l('Id order state'),
                         'name' => 'OKOM_VIP_IDORDERSTATE',
                         'size' => 20,
                         'desc' => $this->l('Choose an id order state to set yout customer in the VIP Group'),
+                    ),
+                    array(
+                        'type' => 'text',
+                        'label' => $this->l('Days'),
+                        'name' => 'OKOM_VIP_NB_DAY',
+                        'size' => 20,
+                        'desc' => $this->l('How many days customer will be VIP'),
                     )
                 ),
                 'submit' => array(
@@ -185,7 +212,7 @@ class okom_vip extends Module
     public function getConfigFieldsValues()
     {
         $conf = Configuration::getMultiple(
-            array('OKOM_VIP_IDPRODUCT','OKOM_VIP_IDGROUP','OKOM_VIP_IDORDERSTATE','OKOM_VIP_CLEAN')
+            array('OKOM_VIP_IDPRODUCT','OKOM_VIP_IDGROUP','OKOM_VIP_IDORDERSTATE','OKOM_VIP_CLEAN','OKOM_VIP_NB_DAY')
         );
         
         return $conf;
@@ -254,7 +281,7 @@ class okom_vip extends Module
                 if ($product['product_id'] == $id_product_vip) {
                     $customer->addGroups($id_group_vip);
                     $customer->vip_add = date('Y-m-d');
-                    $customer->vip_end = date('Y-m-d', strtotime(date('Y-m-d H:i:00').' + 365 DAY'));
+                    $customer->vip_end = date('Y-m-d', strtotime(date('Y-m-d H:i:00').' + '.Configuration::get('OKOM_VIP_NB_DAY').' DAY'));
                     $customer->update();
                 }
             }
