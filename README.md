@@ -49,6 +49,8 @@ Ajouter l'id group Client VIP
 
 Ajouter l'id_order_state qui passera vos clients dans le Groupe VIP
 
+## Tache Cron
+
 ## TODO
 
 Use own table not override
