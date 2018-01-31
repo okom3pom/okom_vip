@@ -38,7 +38,7 @@ class okom_vip extends Module
 
     public function install()
     {
-        $sql = 'ALTER TABLE `ps_customer` ADD `vip_add` DATETIME NOT NULL AFTER `date_upd`, ADD `vip_end` DATETIME NOT NULL AFTER `vip_add`;';
+        $sql = 'ALTER TABLE `'._DB_PREFIX_.'customer` ADD `vip_add` DATETIME NOT NULL AFTER `date_upd`, ADD `vip_end` DATETIME NOT NULL AFTER `vip_add`;';
         if (!parent::install()
             || !$this->registerHook('displayAdminOrderLeft')
             || !$this->registerHook('actionOrderStatusUpdate')
@@ -55,7 +55,7 @@ class okom_vip extends Module
 
     public function uninstall()
     {
-        $sql = 'ALTER TABLE `ps_customer` DROP `vip_add` , DROP `vip_end` ';
+        $sql = 'ALTER TABLE `'._DB_PREFIX_.'customer` DROP `vip_add` , DROP `vip_end` ';
         if (!Db::getInstance()->delete('customer_group', 'id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'))
             || !Db::getInstance()->Execute($sql)
             || !Configuration::deleteByName('OKOM_VIP_IDGROUP')
@@ -93,7 +93,7 @@ class okom_vip extends Module
         }
         // Clean Old Vip Card
         if (Tools::isSubmit('clean')) {
-            $sql = 'SELECT * FROM ps_customer WHERE vip_end != \'0000-00-00 00:00:00\' AND NOW() >= vip_end';
+            $sql = 'SELECT * FROM '._DB_PREFIX_.'customer WHERE vip_end != \'0000-00-00 00:00:00\' AND NOW() >= vip_end';
             
             $old_vip_cards = Db::getInstance()->ExecuteS($sql);
             
