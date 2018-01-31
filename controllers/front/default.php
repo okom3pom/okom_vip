@@ -30,16 +30,27 @@ class okom_vipDefaultModuleFrontController extends ModuleFrontController
     public function initContent()
     {
         parent::initContent();
+		
+		$module = new okom_vip();
 
-        $is_vip = false;
-
-        if (date('Y-m-d') < $this->context->customer->vip_end) {
-            $is_vip = true;
-        }
-
+		$customer_vip = $module->isVIP((int)$this->context->customer->id);
+		
+		if( $customer_vip == false ) {
+			$is_vip = false;
+			$exprired = true;
+		} else {
+		    $is_vip = true;
+            if (date('Y-m-d') < $customer_vip['vip_end']) {
+            $exprired = false;
+            } else {
+			$exprired = true;
+			}
+		}
+		
         $this->context->smarty->assign(array(
-            'customer' => $this->context->customer,
-            'is_vip' => $is_vip
+            'customer_vip' => $customer_vip,
+            'is_vip' => $is_vip,
+			'exprired' => $exprired
         ));
  
         $this->setTemplate('vip.tpl');
