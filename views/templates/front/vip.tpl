@@ -1,3 +1,14 @@
+{*
+* Okom3pom
+*
+* Module Vip Card for Prestashop 1.6.x.x
+*
+* @author    SARL Rouage communication <contact@okom3pom.com>
+* @copyright 2008-2018 Rouage Communication SARL
+* @version   1.0.1
+* @license   Free
+*}
+
 {capture name=path}
 	<a href="{$link->getPageLink('my-account', true)|escape:'html':'UTF-8'}">
 		{l s='Mon compte' mod='okom_vip'}
