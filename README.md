@@ -48,3 +48,8 @@ Ajouter l'id product de l'article : carte VIP
 Ajouter l'id group Client VIP
 
 Ajouter l'id_order_state qui passera vos clients dans le Groupe VIP
+
+## TODO
+
+Use own table not override
+Hook in admin customer controller to change date
