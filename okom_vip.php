@@ -8,7 +8,7 @@
  *
  * @author    SARL Rouage communication <contact@okom3pom.com>
  * @copyright 2008-2018 Rouage Communication SARL
- * @version   1.1.0
+ * @version   1.0.1
  * @license   Free
  */
 
@@ -26,7 +26,7 @@ class okom_vip extends Module
         $this->name = 'okom_vip';
         $this->tab = 'other';
         $this->author = 'Okom3pom';
-        $this->version = '1.0';
+        $this->version = '1.0.1';
         $this->secure_key = Tools::encrypt($this->name);
         $this->generic_name = 'okom_vip';
         $this->bootstrap = true;
