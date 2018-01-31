@@ -36,7 +36,7 @@ if (Tools::getValue('token') != Tools::encrypt('okom_vip') || !Module::isInstall
     foreach ($old_vip_cards as $old_vip_card) {
         Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$old_vip_card['id_customer'].' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
     }
-	echo date('Y-m-d H:i:00').'<br/>';
+    echo date('Y-m-d H:i:00').'<br/>';
     Configuration::updateValue('OKOM_VIP_CLEAN', date('Y-m-d H:i:00'));
     echo 'Done';
 }
