@@ -66,12 +66,12 @@ class okom_vip extends Module
 
     public function install()
     {
-		if (Shop::isFeatureActive()) {
-			Shop::setContext(Shop::CONTEXT_ALL);
-		}
-		
+        if (Shop::isFeatureActive()) {
+            Shop::setContext(Shop::CONTEXT_ALL);
+        }
+        
         if (!parent::install()
-			|| !$this->_installTable()
+            || !$this->_installTable()
             || !$this->registerHook('displayAdminOrderLeft')
             || !$this->registerHook('actionOrderStatusUpdate')
             || !$this->registerHook('customerAccount')
@@ -87,7 +87,7 @@ class okom_vip extends Module
 
     public function uninstall()
     {
-		//$sql = !Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.$this->table_name.'`');
+        //$sql = !Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.$this->table_name.'`');
         if (!Db::getInstance()->delete('customer_group', 'id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'))
             || !Configuration::deleteByName('OKOM_VIP_IDGROUP')
             || !Configuration::deleteByName('OKOM_VIP_IDORDERSTATE')
@@ -179,7 +179,7 @@ class okom_vip extends Module
                     'title' => $this->l('Save'),
                 )
             ),
-        );        
+        );
         $fields_form[1] = array(
             'form' => array(
                 'legend' => array(
@@ -224,13 +224,13 @@ class okom_vip extends Module
     {
         $conf = Configuration::getMultiple(
             array('OKOM_VIP_IDPRODUCT','OKOM_VIP_IDGROUP','OKOM_VIP_IDORDERSTATE','OKOM_VIP_CLEAN','OKOM_VIP_NB_DAY')
-        );        
+        );
         return $conf;
     }
 
     public function getcontent()
     {
-        $this->_html .= '<h2>'.$this->displayName.'</h2>';              
+        $this->_html .= '<h2>'.$this->displayName.'</h2>';
         if (Tools::isSubmit('btnSubmit')) {
             $this->_postValidation();
             if (!count($this->_postErrors)) {
@@ -282,22 +282,22 @@ class okom_vip extends Module
             
             foreach ($products as $product) {
                 //Fucking table with product_id not id_product
-                if ($product['product_id'] == $id_product_vip) {					
-					if( $this->isVIP((int)$customer->id) == false ) {					
+                if ($product['product_id'] == $id_product_vip) {
+                    if ($this->isVIP((int)$customer->id) == false) {
                         $values[] = array(
                             'id_customer' => (int)$customer->id,
                             'vip_add' => date('Y-m-d'),
                             'vip_end' => date('Y-m-d', strtotime(date('Y-m-d H:i:00').' + '.Configuration::get('OKOM_VIP_NB_DAY').' DAY'))
-                        );					
-					    Db::getInstance()->insert($this->table_name, $values);					
+                        );
+                        Db::getInstance()->insert($this->table_name, $values);
                         $customer->addGroups($id_group_vip);
-					} else {
-						$values = array(
+                    } else {
+                        $values = array(
                             'vip_add' => date('Y-m-d'),
                             'vip_end' => date('Y-m-d', strtotime(date('Y-m-d H:i:00').' + '.Configuration::get('OKOM_VIP_NB_DAY').' DAY'))
                         );
-						Db::getInstance()->update($this->table_name, $values, 'id_customer = '.(int)$customer->id);
-						$customer->addGroups($id_group_vip);					
+                        Db::getInstance()->update($this->table_name, $values, 'id_customer = '.(int)$customer->id);
+                        $customer->addGroups($id_group_vip);
                     }
                 }
             }
@@ -326,15 +326,15 @@ class okom_vip extends Module
     {
         return $this->display(__FILE__, 'my-account.tpl');
     }
-	
-	public function isVIP($id_customer)
-	{		
-		$is_vip = false;
-        $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE id_customer = '.(int)$id_customer.' ';		
-		$result = Db::getInstance()->executeS($sql);
-		if( $result ) {
-			$is_vip = $result[0];
-		}		
-		return $is_vip;			
-	}
+    
+    public function isVIP($id_customer)
+    {
+        $is_vip = false;
+        $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE id_customer = '.(int)$id_customer.' ';
+        $result = Db::getInstance()->executeS($sql);
+        if ($result) {
+            $is_vip = $result[0];
+        }
+        return $is_vip;
+    }
 }
