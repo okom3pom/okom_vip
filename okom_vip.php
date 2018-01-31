@@ -28,7 +28,6 @@ class okom_vip extends Module
         $this->author = 'Okom3pom';
         $this->version = '1.0.1';
         $this->secure_key = Tools::encrypt($this->name);
-        $this->generic_name = 'okom_vip';
         $this->bootstrap = true;
 
         parent::__construct();
