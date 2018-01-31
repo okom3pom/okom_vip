@@ -66,6 +66,10 @@ class okom_vip extends Module
 
     public function install()
     {
+		if (Shop::isFeatureActive()) {
+			Shop::setContext(Shop::CONTEXT_ALL);
+		}
+		
         if (!parent::install()
 			|| !$this->_installTable()
             || !$this->registerHook('displayAdminOrderLeft')
@@ -287,7 +291,14 @@ class okom_vip extends Module
                         );					
 					    Db::getInstance()->insert($this->table_name, $values);					
                         $customer->addGroups($id_group_vip);
-					}
+					} else {
+						$values = array(
+                            'vip_add' => date('Y-m-d'),
+                            'vip_end' => date('Y-m-d', strtotime(date('Y-m-d H:i:00').' + '.Configuration::get('OKOM_VIP_NB_DAY').' DAY'))
+                        );
+						Db::getInstance()->update($this->table_name, $values, 'id_customer = '.(int)$customer->id);
+						$customer->addGroups($id_group_vip);					
+                    }
                 }
             }
         }
@@ -319,13 +330,11 @@ class okom_vip extends Module
 	public function isVIP($id_customer)
 	{		
 		$is_vip = false;
-        $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE id_customer = '.(int)$id_customer.' ';
-		
+        $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE id_customer = '.(int)$id_customer.' ';		
 		$result = Db::getInstance()->executeS($sql);
 		if( $result ) {
 			$is_vip = $result[0];
-		}
-		
+		}		
 		return $is_vip;			
 	}
 }
