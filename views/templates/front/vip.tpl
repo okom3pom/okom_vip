@@ -29,7 +29,7 @@
 	{l s='Commande prioritaire' mod='okom_vip'}<br/>
 	{l s='Des offres de folies réservées aux membres VIP' mod='okom_vip'}<br/><br/>
 
-	<img class="img-responsive" src='{$modules_dir}/okom_vip/img/vip.png' alt='Devenez client VIP !'>
+	<img class="img-responsive" src='{$modules_dir}/okom_vip/img/vip.png' alt='{l s='Devenez client Vip' mod='okom_vip'}'>
 </div>
 
 {else if $is_vip == true && $exprired == false}
@@ -39,7 +39,7 @@
 {l s='Votre carte VIP est valable du' mod='okom_vip'} {$customer_vip['vip_add']} {l s='au' mod='okom_vip'} {$customer_vip['vip_end']}
 <br/><br/>
 
-<img class="img-responsive" src='{$modules_dir}/okom_vip/img/vip.png' alt='Vous êtes client VIP Esprit Equitation'>
+<img class="img-responsive" src='{$modules_dir}/okom_vip/img/vip.png' alt='{l s='Vous êtes client VIP' mod='okom_vip'}'>
 
 </div>
 
@@ -51,7 +51,7 @@
 {l s='Vous pouvez le renouveler dès maintenant en cliquant ici' mod='okom_vip'}
 <br/><br/>
 
-<img class="img-responsive" src='{$modules_dir}/okom_vip/img/vip.png' alt='Vous êtes client VIP Esprit Equitation'>
+<img class="img-responsive" src='{$modules_dir}/okom_vip/img/vip.png' alt='{l s='Abonnement VIP expiré' mod='okom_vip'}'>
 
 </div>
 
