@@ -66,6 +66,10 @@ class okom_vip extends Module
 
     public function install()
     {
+		if (Shop::isFeatureActive()) {
+			Shop::setContext(Shop::CONTEXT_ALL);
+		}
+		
         if (!parent::install()
 			|| !$this->_installTable()
             || !$this->registerHook('displayAdminOrderLeft')
