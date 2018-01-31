@@ -5,12 +5,12 @@
 *
 * @author    SARL Rouage communication <contact@okom3pom.com>
 * @copyright 2008-2018 Rouage Communication SARL
-* @version   1.0.1
+* @version   1.0.2
 * @license   Free
 *}
 
-<!-- MODULE Loyalty -->
+<!-- MODULE VIP Card -->
 <li class="loyalty">
 	<a href="{$link->getModuleLink('okom_vip', 'default')|escape:'html':'UTF-8'}" title="{l s='Ma carte VIP' mod='okom_vip'}" rel="nofollow"><i class="icon-star"></i><span>{l s='Ma carte VIP' mod='okom_vip'}</span></a>
 </li>
-<!-- END : MODULE Loyalty -->
+<!-- END : MODULE Card -->
