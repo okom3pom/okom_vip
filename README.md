@@ -19,24 +19,6 @@ Ajouter une règle de panier avec comme condition l'id du produit de la Carte VI
 
 Ajouter une règle de panier avec comme condition l'id du groupe de la Carte VIP et comme action FDP offert ou autre. 
 
-## Override
-
-Vous devez ajouter un override à la Class Customer :
-
-```
-class Customer extends CustomerCore
-{   
-    public $vip_add;
-    public $vip_end;
-
-    public function __construct($id = null)
-    {        
-        Customer::$definition['fields']['vip_add'] =  array('type' => self::TYPE_DATE,'copy_post' => false);
-        Customer::$definition['fields']['vip_end'] =  array('type' => self::TYPE_DATE,'copy_post' => false);	
-        parent::__construct($id);
-    }
-}
-```
 
 ## Configuration du Module
 
@@ -53,7 +35,5 @@ Vous pouvez ajouter une tache cron pour supprimer automatiquement les cartes vip
 L'url est disponible dans la configuration du module.
 
 ## TODO
-
-Use own table not override.
 
 Hook in admin customer controller to change date.

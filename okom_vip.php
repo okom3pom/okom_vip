@@ -19,7 +19,7 @@
  *
  * @author    SARL Rouage communication <contact@okom3pom.com>
  * @copyright 2008-2018 Rouage Communication SARL
- * @version   1.0.2
+ * @version   1.0.3
  * @license   Free
  */
 
@@ -37,7 +37,7 @@ class okom_vip extends Module
         $this->name = 'okom_vip';
         $this->tab = 'other';
         $this->author = 'Okom3pom';
-        $this->version = '1.0.1';
+        $this->version = '1.0.3';
         $this->secure_key = Tools::encrypt($this->name);
         $this->bootstrap = true;
         $this->table_name = 'vip';
@@ -66,10 +66,8 @@ class okom_vip extends Module
 
     public function install()
     {
-        $sql = 'ALTER TABLE `'._DB_PREFIX_.'customer` ADD `vip_add` DATETIME NOT NULL AFTER `date_upd`, ADD `vip_end` DATETIME NOT NULL AFTER `vip_add`;';
-        // || !$this->_installTable()
         if (!parent::install()
-            || !Db::getInstance()->Execute($sql)
+			|| !$this->_installTable()
             || !$this->registerHook('displayAdminOrderLeft')
             || !$this->registerHook('actionOrderStatusUpdate')
             || !$this->registerHook('customerAccount')
@@ -85,9 +83,8 @@ class okom_vip extends Module
 
     public function uninstall()
     {
-        $sql = 'ALTER TABLE `'._DB_PREFIX_.'customer` DROP `vip_add` , DROP `vip_end` ';
+		//$sql = !Db::getInstance()->Execute('DROP TABLE `'._DB_PREFIX_.$this->table_name.'`');
         if (!Db::getInstance()->delete('customer_group', 'id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'))
-            || !Db::getInstance()->Execute($sql)
             || !Configuration::deleteByName('OKOM_VIP_IDGROUP')
             || !Configuration::deleteByName('OKOM_VIP_IDORDERSTATE')
             || !Configuration::deleteByName('OKOM_VIP_CLEAN')
@@ -124,7 +121,7 @@ class okom_vip extends Module
         }
         // Clean Old Vip Card
         if (Tools::isSubmit('clean')) {
-            $sql = 'SELECT * FROM '._DB_PREFIX_.'customer WHERE vip_end != \'0000-00-00 00:00:00\' AND NOW() >= vip_end';
+            $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE vip_end != \'0000-00-00 00:00:00\' AND NOW() >= vip_end';
             
             $old_vip_cards = Db::getInstance()->ExecuteS($sql);
             
@@ -223,15 +220,13 @@ class okom_vip extends Module
     {
         $conf = Configuration::getMultiple(
             array('OKOM_VIP_IDPRODUCT','OKOM_VIP_IDGROUP','OKOM_VIP_IDORDERSTATE','OKOM_VIP_CLEAN','OKOM_VIP_NB_DAY')
-        );
-        
+        );        
         return $conf;
     }
 
     public function getcontent()
     {
-        $this->_html .= '<h2>'.$this->displayName.'</h2>';
-              
+        $this->_html .= '<h2>'.$this->displayName.'</h2>';              
         if (Tools::isSubmit('btnSubmit')) {
             $this->_postValidation();
             if (!count($this->_postErrors)) {
@@ -244,8 +239,6 @@ class okom_vip extends Module
         } else {
             $this->_html .= '<br />';
         }
-
-
         $this->_html .= '<div class="row">
                             <div class="col-lg-12">
                                 <div class="panel" id="news">
@@ -257,10 +250,7 @@ class okom_vip extends Module
                                     </div>          
                             </div>                          
                         </div>';
-
-
         $this->_html .= $this->renderForm();
-
         return $this->_html;
     }
 
@@ -288,11 +278,16 @@ class okom_vip extends Module
             
             foreach ($products as $product) {
                 //Fucking table with product_id not id_product
-                if ($product['product_id'] == $id_product_vip) {
-                    $customer->addGroups($id_group_vip);
-                    $customer->vip_add = date('Y-m-d');
-                    $customer->vip_end = date('Y-m-d', strtotime(date('Y-m-d H:i:00').' + '.Configuration::get('OKOM_VIP_NB_DAY').' DAY'));
-                    $customer->update();
+                if ($product['product_id'] == $id_product_vip) {					
+					if( $this->isVIP((int)$customer->id) == false ) {					
+                        $values[] = array(
+                            'id_customer' => (int)$customer->id,
+                            'vip_add' => date('Y-m-d'),
+                            'vip_end' => date('Y-m-d', strtotime(date('Y-m-d H:i:00').' + '.Configuration::get('OKOM_VIP_NB_DAY').' DAY'))
+                        );					
+					    Db::getInstance()->insert($this->table_name, $values);					
+                        $customer->addGroups($id_group_vip);
+					}
                 }
             }
         }
@@ -320,4 +315,17 @@ class okom_vip extends Module
     {
         return $this->display(__FILE__, 'my-account.tpl');
     }
+	
+	public function isVIP($id_customer)
+	{		
+		$is_vip = false;
+        $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE id_customer = '.(int)$id_customer.' ';
+		
+		$result = Db::getInstance()->executeS($sql);
+		if( $result ) {
+			$is_vip = $result[0];
+		}
+		
+		return $is_vip;			
+	}
 }

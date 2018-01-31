@@ -5,7 +5,7 @@
 *
 * @author    SARL Rouage communication <contact@okom3pom.com>
 * @copyright 2008-2018 Rouage Communication SARL
-* @version   1.0.2
+* @version   1.0.3
 * @license   Free
 *}
 
@@ -20,7 +20,7 @@
 <h1 class="page-heading bottom-indent">{l s='Ma Carte VIP' mod='okom_vip'}</h1>
 
 
-{if $customer->vip_add == '0000-00-00 00:00:00' && $customer->vip_end == '0000-00-00 00:00:00' }
+{if $is_vip == false }
 
 <div class="block-center well">
 	{l s='Pas encore membre VIP, profitez d\'avantages avec notre carte VIP !' mod='okom_vip'}
@@ -32,11 +32,11 @@
 	<img class="img-responsive" src='{$img_ps_dir}okom3pom/vip.png' alt='Devenez client VIP !'>
 </div>
 
-{else if $is_vip == true}
+{else if $is_vip == true && $exprired == false}
 
 <div class="block-center well">			
 			
-{l s='Votre carte VIP est valable du' mod='okom_vip'} {$customer->vip_add} {l s='au' mod='okom_vip'} {$customer->vip_end}
+{l s='Votre carte VIP est valable du' mod='okom_vip'} {$customer_vip['vip_add']} {l s='au' mod='okom_vip'} {$customer_vip['vip_end']}
 <br/><br/>
 
 <img class="img-responsive" src='{$img_ps_dir}okom3pom/vip.png' alt='Vous êtes client VIP Esprit Equitation'>
@@ -47,7 +47,7 @@
 
 <div class="block-center well">			
 			
-{l s='Votre abonnement VIP est terminé depuis le ' mod='okom_vip'} {$customer->vip_end}<br/>
+{l s='Votre abonnement VIP est terminé depuis le ' mod='okom_vip'} {$customer_vip['vip_end']}<br/>
 {l s='Vous pouvez le renouveler dès maintenant en cliquant ici' mod='okom_vip'}
 <br/><br/>
 
