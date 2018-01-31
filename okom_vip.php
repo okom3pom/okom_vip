@@ -178,8 +178,7 @@ class okom_vip extends Module
                     'title' => $this->l('Save'),
                 )
             ),
-        );
-        
+        );        
         $fields_form[1] = array(
             'form' => array(
                 'legend' => array(
