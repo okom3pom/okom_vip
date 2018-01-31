@@ -264,12 +264,14 @@ class okom_vip extends Module
       
     public function hookdisplayAdminOrder()
     {
-        echo '<!-- VIP Customer -->
+        echo '
+        <!-- VIP Customer -->
 		<div class="panel">
-        <div class="panel-heading"><i class="icon-money"></i>'.$this->l('Customer VIP !').'</div>
-		<div class="table-responsive">';
-        $this->l('This customer is VIP !');
-        echo '</div></div>';
+            <div class="panel-heading"><i class="icon-money"></i>'.$this->l('Customer VIP !').'</div>
+		        <div class="table-responsive">
+                    '.$this->l('This customer is VIP !').'
+                </div>
+        </div>';
     }
     
     public function hookdisplayAdminOrderLeft()
