@@ -57,3 +57,5 @@ L'url est disponible dans la configuration du module.
 Use own table not override.
 
 Hook in admin customer controller to change date.
+
+Add option to choose how many day customer will be VIP
