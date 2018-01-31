@@ -19,7 +19,6 @@
  *
  * @author    SARL Rouage communication <contact@okom3pom.com>
  * @copyright 2008-2018 Rouage Communication SARL
- * @version   1.0.4
  * @license   Free
  */
 

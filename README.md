@@ -34,6 +34,11 @@ Vous pouvez ajouter une tache cron pour supprimer automatiquement les cartes vip
 
 L'url est disponible dans la configuration du module.
 
+## /!\ Suppression du module /!\
+
+A la suppression du module la table vip n'est pas supprimée, vous devez le faire manuellement si vous souhaitez effacer la table.
+Tous les membres du groupe VIP seront retirés du groupe 
+
 ## TODO
 
 Hook in admin customer controller to change date.
