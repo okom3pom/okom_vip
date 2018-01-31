@@ -75,6 +75,7 @@ class okom_vip extends Module
             || !$this->registerHook('displayAdminOrderLeft')
             || !$this->registerHook('actionOrderStatusUpdate')
             || !$this->registerHook('customerAccount')
+            || !$this->registerHook('adminCustomers')
             || !Configuration::updateValue('OKOM_VIP_IDGROUP', '')
             || !Configuration::updateValue('OKOM_VIP_IDORDERSTATE', '')
             || !Configuration::updateValue('OKOM_VIP_CLEAN', date('Y-m-d'))
@@ -325,6 +326,31 @@ class okom_vip extends Module
     public function hookCustomerAccount($params)
     {
         return $this->display(__FILE__, 'my-account.tpl');
+    }
+
+    /* Hook display in tab AdminCustomers on BO */
+    public function hookAdminCustomers($params)
+    {
+        $customer = new Customer((int)$params['id_customer']);
+        if ($customer && !Validate::isLoadedObject($customer)) {
+            die($this->l('Incorrect Customer object.'));
+        }
+
+        $customer_vip = $this->isVIP((int)$params['id_customer']);
+
+        if ($customer_vip == false) {
+            return false;
+        } else {
+            $html = '';
+            $html .= '<div class="col-lg-12">
+		              <div class="panel">
+			          <div class="panel-heading">'.$this->l('VIP Customer').'</div>
+		              <div class="panel-body">';
+            $html .= $this->l('Vip card start : ').$customer_vip['vip_add'].' '.$this->l('Vip Card End : ').$customer_vip['vip_end'];
+            $html .= '</div></div></div>';
+
+            return $html;
+        }
     }
     
     public function isVIP($id_customer)
