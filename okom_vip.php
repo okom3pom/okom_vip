@@ -19,7 +19,7 @@
  *
  * @author    SARL Rouage communication <contact@okom3pom.com>
  * @copyright 2008-2018 Rouage Communication SARL
- * @version   1.0.5
+ * @version   1.0.6
  * @license   Free
  */
 
@@ -37,7 +37,7 @@ class okom_vip extends Module
         $this->name = 'okom_vip';
         $this->tab = 'other';
         $this->author = 'Okom3pom';
-        $this->version = '1.0.5';
+        $this->version = '1.0.6';
         $this->secure_key = Tools::encrypt($this->name);
         $this->bootstrap = true;
         $this->table_name = 'vip';
@@ -113,6 +113,9 @@ class okom_vip extends Module
             if (!Tools::getValue('OKOM_VIP_IDORDERSTATE')) {
                 $this->_postErrors[] = $this->l('You don\'t choose an id_order_state to set customer in the VIP Group');
             }
+            if (!Tools::getValue('OKOM_VIP_NB_DAY')) {
+                Tools::getValue('OKOM_VIP_NB_DAY') == 365;
+            }
         }
     }
     
@@ -126,7 +129,7 @@ class okom_vip extends Module
         }
         // Clean Old Vip Card
         if (Tools::isSubmit('clean')) {
-            $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE vip_end != \'0000-00-00 00:00:00\' AND NOW() >= vip_end';
+            $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE NOW() >= vip_end';
             
             $old_vip_cards = Db::getInstance()->ExecuteS($sql);
             
@@ -328,112 +331,132 @@ class okom_vip extends Module
         return $this->display(__FILE__, 'my-account.tpl');
     }
 
-    /* Hook display in tab AdminCustomers on BO */
     public function hookAdminCustomers($params)
     {
         $customer = new Customer((int)$params['id_customer']);
         if ($customer && !Validate::isLoadedObject($customer)) {
             die($this->l('Incorrect Customer object.'));
         }
+        $vip_add = '';
+        $vip_end = '';
+        $html = '';
 
-        $customer_vip = $this->isVIP((int)$params['id_customer']);
+        if (Tools::getValue('vip_add') && Tools::getValue('vip_end')) {
+            $customer_vip = $this->isVIP((int)$params['id_customer']);
 
-        if ($customer_vip == false) {
-            return false;
-        } else {
-            if (Tools::getValue('vip_add') && Tools::getValue('vip_end')) {
+            if ($customer_vip == false) {
+                $values[] = array(
+                    'id_customer' => (int)$customer->id,
+                    'vip_add' => Tools::getValue('vip_add'),
+                    'vip_end' => Tools::getValue('vip_end')
+                );
+                Db::getInstance()->insert($this->table_name, $values);
+                if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
+                    $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
+                    $customer->addGroups($id_group_vip);
+                }
+            } else {
                 $values = array(
                     'vip_add' => Tools::getValue('vip_add'),
                     'vip_end' => Tools::getValue('vip_end')
                 );
                 Db::getInstance()->update($this->table_name, $values, 'id_customer = '.(int)$customer->id);
-                // Reload new date
-                $customer_vip = $this->isVIP((int)$params['id_customer']);
+                
+                if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
+                    $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
+                    $customer->addGroups($id_group_vip);
+                }
             }
-            $html = '';
-            $html .= '<div class="col-lg-12">
-		              <div class="panel">
-			          <div class="panel-heading">'.$this->l('VIP Customer').'</div>
-		              <div class="panel-body">';
+        }
 
-            $html .= '
-            <form class="defaultForm form-horizontal" id="edit_vp" name="edit_vp" method="POST">
-	            <div class="form-group">													
-					<label class="control-label col-lg-3">'.$this->l('Vip Card Start : ').'</label>							
-					<div class="col-lg-9">					
-						<div class="row">
-							<div class="input-group col-lg-4">
-								<input id="vip_add" type="text" data-hex="true" class="datetimepicker" name="vip_add" value="'.$customer_vip['vip_add'].'">
-								<span class="input-group-addon">
-									<i class="icon-calendar-empty"></i>
-								</span>
+        $customer_vip = $this->isVIP((int)$params['id_customer']);
+
+        if ($customer_vip == false) {
+            $vip_add = '0000-00-00';
+            $vip_end = '0000-00-00';
+        } else {
+            $vip_add = $customer_vip['vip_add'];
+            $vip_end = $customer_vip['vip_end'];
+        }
+
+        
+        $html .= '
+        <div class="col-lg-12">
+	    <div class="panel">
+		<div class="panel-heading">'.$this->l('VIP Customer').'</div>
+	    <div class="panel-body">';
+
+        $html .= '
+        <form class="defaultForm form-horizontal" id="edit_vp" name="edit_vp" method="POST">
+            <div class="form-group">													
+				<label class="control-label col-lg-3">'.$this->l('Vip Card Start : ').'</label>							
+				<div class="col-lg-9">					
+					<div class="row">
+						<div class="input-group col-lg-4">
+							<input id="vip_add" type="text" data-hex="true" class="datetimepicker" name="vip_add" value="'.$vip_add.'">
+							<span class="input-group-addon">
+								<i class="icon-calendar-empty"></i>
+							</span>
+						</div>
+					</div>							
+					<p class="help-block"></p>																	
+				</div>							
+			</div>
+
+			<div class="form-group">													
+				<label class="control-label col-lg-3">'.$this->l('Vip Card End : ').'</label>
+				<div class="col-lg-9">
+					<div class="row">
+						<div class="input-group col-lg-4">
+							<input id="vip_end" type="text" data-hex="true" class="datetimepicker" name="vip_end" value="'.$vip_end.'">
+							<span class="input-group-addon">
+								<i class="icon-calendar-empty"></i>
+							</span>
 							</div>
-						</div>							
-						<p class="help-block">
-						Début de la vente
-						</p>																	
+						</div>
+						<p class="help-block"></p>
 					</div>							
 				</div>
+			<div class="panel-footer">
+				<button type="submit" value="1" id="submit_edit_vip" name="submit_edit_vip" class="btn btn-default pull-right">
+					<i class="process-icon-save"></i> '.$this->l('Update').'
+				</button>
+			</div>
+		</from>';
 
-				<div class="form-group">													
-					<label class="control-label col-lg-3">'.$this->l('Vip Card End : ').'</label>
-					<div class="col-lg-9">
-						<div class="row">
-							<div class="input-group col-lg-4">
-								<input id="vip_end" type="text" data-hex="true" class="datetimepicker" name="vip_end" value="'.$customer_vip['vip_end'].'">
-								<span class="input-group-addon">
-									<i class="icon-calendar-empty"></i>
-								</span>
-								</div>
-							</div>
-							<p class="help-block">
-							Date de fin de la vente privée
-							</p>
-						</div>							
-					</div>
-				<div class="panel-footer">
-					<button type="submit" value="1" id="submit_edit_vip" name="submit_edit_vip" class="btn btn-default pull-right">
-						<i class="process-icon-save"></i> Enregistrer
-					</button>
-				</div>
-			</from>';
+        $html .= '</div></div></div>';
 
-            $html .= '</div></div></div>';
-
-            $html .= '
-        	<script type="text/javascript">
-				$(document).ready(function() {
-			
-					if ($(".datepicker").length > 0)
-						$(".datepicker").datepicker({
-							prevText: "",
-							nextText: "",
-							dateFormat: "yy-mm-dd"
-					});
-
-					if ($(".datetimepicker").length > 0)
-						$(".datetimepicker").datetimepicker({
-							prevText: "",
-							nextText: "",
-							dateFormat: "yy-mm-dd",
-							// Define a custom regional settings in order to use PrestaShop translation tools
-							currentText: "Maintenant",
-							closeText: "Valider",
-							ampm: false,
-							amNames: ["AM", "A"],
-							pmNames: ["PM", "P"],
-							timeFormat: "hh:mm:ss tt",
-							timeSuffix: "",
-							timeOnlyTitle: "Choisir l heure",
-							timeText: "Heure",
-							hourText: "Heure",
-							minuteText: "Minute",
-					});
+        $html .= '
+    	<script type="text/javascript">
+			$(document).ready(function() {			
+				if ($(".datepicker").length > 0)
+					$(".datepicker").datepicker({
+						prevText: "",
+						nextText: "",
+						dateFormat: "yy-mm-dd"
 				});
-			</script>';
+				if ($(".datetimepicker").length > 0)
+					$(".datetimepicker").datetimepicker({
+						prevText: "",
+						nextText: "",
+						dateFormat: "yy-mm-dd",
+						// Define a custom regional settings in order to use PrestaShop translation tools
+						currentText: "Maintenant",
+						closeText: "Valider",
+						ampm: false,
+						amNames: ["AM", "A"],
+						pmNames: ["PM", "P"],
+						timeFormat: "hh:mm:ss tt",
+						timeSuffix: "",
+						timeOnlyTitle: "Choisir l heure",
+						timeText: "Heure",
+						hourText: "Heure",
+						minuteText: "Minute",
+				});
+			});
+		</script>';
 
-            return $html;
-        }
+        return $html;
     }
     
     public function isVIP($id_customer)

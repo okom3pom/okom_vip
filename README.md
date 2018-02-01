@@ -37,8 +37,8 @@ L'url est disponible dans la configuration du module.
 ## /!\ Suppression du module /!\
 
 A la suppression du module la table vip n'est pas supprimée, vous devez le faire manuellement si vous souhaitez effacer la table.
-Tous les membres du groupe VIP seront retirés du groupe 
+Tous les membres du groupe VIP seront retirés du groupe
 
-## TODO
+## TODO 
 
-Hook in admin customer controller to change date.
+Move html and js to a tpl file
