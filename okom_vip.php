@@ -37,7 +37,7 @@ class okom_vip extends Module
         $this->name = 'okom_vip';
         $this->tab = 'other';
         $this->author = 'Okom3pom';
-        $this->version = '1.0.7';
+        $this->version = '1.0.8';
         $this->secure_key = Tools::encrypt($this->name);
         $this->bootstrap = true;
         $this->table_name = 'vip';

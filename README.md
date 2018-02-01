@@ -1,4 +1,4 @@
-# Module VIP Card for Prestashop 1.6.X.X
+# Module VIP Card for Prestashop 1.6.X.X AND Thirty Bees 1.0.3
 
 Simple module pour gérer des cartes VIP, il est basé sur deux règles de paniers
 
