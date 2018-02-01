@@ -23,7 +23,7 @@
  * @license   Free
  */
 
-if (!defined('_PS_VERSION_') || !defined('_TB_VERSION_')) {
+if (!defined('_PS_VERSION_') && !defined('_TB_VERSION_')) {
     exit;
 }
 
