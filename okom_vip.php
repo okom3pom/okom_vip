@@ -342,11 +342,31 @@ class okom_vip extends Module
         $html = '';
 
         if (Tools::getValue('vip_add') && Tools::getValue('vip_end')) {
-            $values = array(
-                'vip_add' => Tools::getValue('vip_add'),
-                'vip_end' => Tools::getValue('vip_end')
-            );
-            Db::getInstance()->update($this->table_name, $values, 'id_customer = '.(int)$customer->id);
+            $customer_vip = $this->isVIP((int)$params['id_customer']);
+
+            if ($customer_vip == false) {
+                $values[] = array(
+                    'id_customer' => (int)$customer->id,
+                    'vip_add' => Tools::getValue('vip_add'),
+                    'vip_end' => Tools::getValue('vip_end')
+                );
+                Db::getInstance()->insert($this->table_name, $values);
+                if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
+                    $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
+                    $customer->addGroups($id_group_vip);
+                }
+            } else {
+                $values = array(
+                    'vip_add' => Tools::getValue('vip_add'),
+                    'vip_end' => Tools::getValue('vip_end')
+                );
+                Db::getInstance()->update($this->table_name, $values, 'id_customer = '.(int)$customer->id);
+                
+                if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
+                    $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
+                    $customer->addGroups($id_group_vip);
+                }
+            }
         }
 
         $customer_vip = $this->isVIP((int)$params['id_customer']);
