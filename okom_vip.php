@@ -113,6 +113,9 @@ class okom_vip extends Module
             if (!Tools::getValue('OKOM_VIP_IDORDERSTATE')) {
                 $this->_postErrors[] = $this->l('You don\'t choose an id_order_state to set customer in the VIP Group');
             }
+            if (!Tools::getValue('OKOM_VIP_NB_DAY')) {
+                Tools::getValue('OKOM_VIP_NB_DAY') == 365;
+            }
         }
     }
     
@@ -328,7 +331,6 @@ class okom_vip extends Module
         return $this->display(__FILE__, 'my-account.tpl');
     }
 
-    /* Hook display in tab AdminCustomers on BO */
     public function hookAdminCustomers($params)
     {
         $customer = new Customer((int)$params['id_customer']);
@@ -369,9 +371,7 @@ class okom_vip extends Module
 								</span>
 							</div>
 						</div>							
-						<p class="help-block">
-						Début de la vente
-						</p>																	
+						<p class="help-block"></p>																	
 					</div>							
 				</div>
 
@@ -386,14 +386,12 @@ class okom_vip extends Module
 								</span>
 								</div>
 							</div>
-							<p class="help-block">
-							Date de fin de la vente privée
-							</p>
+							<p class="help-block"></p>
 						</div>							
 					</div>
 				<div class="panel-footer">
 					<button type="submit" value="1" id="submit_edit_vip" name="submit_edit_vip" class="btn btn-default pull-right">
-						<i class="process-icon-save"></i> Enregistrer
+						<i class="process-icon-save"></i> '.$this->l('Update').'
 					</button>
 				</div>
 			</from>';
@@ -402,15 +400,13 @@ class okom_vip extends Module
 
             $html .= '
         	<script type="text/javascript">
-				$(document).ready(function() {
-			
+				$(document).ready(function() {			
 					if ($(".datepicker").length > 0)
 						$(".datepicker").datepicker({
 							prevText: "",
 							nextText: "",
 							dateFormat: "yy-mm-dd"
 					});
-
 					if ($(".datetimepicker").length > 0)
 						$(".datetimepicker").datetimepicker({
 							prevText: "",
