@@ -48,9 +48,15 @@ Tous les membres du groupe VIP seront retirés du groupe
 
 ![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_mon_compte.png)
 
+
 ![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_front_controller.png)
 
+
 ![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_config_module.png)
+
+
+![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_admin_order-controller.png)
+
 
 
 ## TODO 
