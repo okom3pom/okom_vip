@@ -28,7 +28,7 @@ if (Tools::getValue('token') != Tools::encrypt('okom_vip') || !Module::isInstall
     echo 'OUPS !';
     die();
 } else {
-    $sql = 'SELECT * FROM '._DB_PREFIX_.'vip'.' WHERE vip_end != \'0000-00-00 00:00:00\' AND NOW() >= vip_end';
+    $sql = 'SELECT * FROM '._DB_PREFIX_.'vip'.' WHERE NOW() >= vip_end';
             
     $old_vip_cards = Db::getInstance()->ExecuteS($sql);
             

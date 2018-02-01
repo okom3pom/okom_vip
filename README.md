@@ -20,7 +20,7 @@ Ajouter une règle de panier avec comme condition l'id du produit de la Carte VI
 Ajouter une règle de panier avec comme condition l'id du groupe de la Carte VIP et comme action FDP offert ou autre. 
 
 
-## Configuration du Module
+## Configuration / Utilsation du Module
 
 Ajouter l'id product de l'article : carte VIP.
 
@@ -28,11 +28,16 @@ Ajouter l'id group Client VIP.
 
 Ajouter l'id_order_state qui passera vos clients dans le Groupe VIP.
 
+Ajouter le nombre de jours de la validité de la carte. 
+
+Vous pouvez modifier les dates d'abonnement depuis une commande ou depuis la fiche client du BO.
+
 ## Tache Cron
 
 Vous pouvez ajouter une tache cron pour supprimer automatiquement les cartes vip expirées.
 
 L'url est disponible dans la configuration du module.
+
 
 ## /!\ Suppression du module /!\
 
