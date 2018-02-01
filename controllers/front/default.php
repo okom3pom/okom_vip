@@ -44,11 +44,16 @@ class okom_vipDefaultModuleFrontController extends ModuleFrontController
                 $exprired = true;
             }
         }
+
+        $product = new Product((int)Configuration::get('OKOM_VIP_IDPRODUCT'));
+        $link = new Link();
+        $vip_product_url = $link->getProductLink($product);
                 
         $this->context->smarty->assign(array(
             'customer_vip' => $customer_vip,
             'is_vip' => $is_vip,
-            'exprired' => $exprired
+            'exprired' => $exprired,
+            'vip_product_url' => $vip_product_url
         ));
  
         $this->setTemplate('vip.tpl');
