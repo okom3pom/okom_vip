@@ -44,6 +44,21 @@ L'url est disponible dans la configuration du module.
 A la suppression du module la table vip n'est pas supprimée, vous devez le faire manuellement si vous souhaitez effacer la table.
 Tous les membres du groupe VIP seront retirés du groupe
 
+## Screenshot
+
+![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_mon_compte.png)
+
+
+![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_front_controller.png)
+
+
+![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_config_module.png)
+
+
+![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_admin_order-controller.png)
+
+
+
 ## TODO 
 
 Move html and js to a tpl file

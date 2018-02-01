@@ -3,8 +3,8 @@
 *
 * Module Vip Card for Prestashop 1.6.x.x
 *
-* @author    SARL Rouage communication <contact@okom3pom.com>
-* @copyright 2008-2018 Rouage Communication SARL
+* @author    Okom3pom <contact@okom3pom.com>
+* @copyright 2008-2018 Okom3pom
 * @license   Free
 *}
 

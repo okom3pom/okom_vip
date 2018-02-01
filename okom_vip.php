@@ -17,13 +17,13 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  *
- * @author    SARL Rouage communication <contact@okom3pom.com>
- * @copyright 2008-2018 Rouage Communication SARL
+ * @author    Okom3pom <contact@okom3pom.com>
+ * @copyright 2008-2018 Okom3pom
  * @version   1.0.7
  * @license   Free
  */
 
-if (!defined('_PS_VERSION_')) {
+if (!defined('_PS_VERSION_') || !defined('_TB_VERSION_')) {
     exit;
 }
 
@@ -94,6 +94,7 @@ class okom_vip extends Module
             || !Configuration::deleteByName('OKOM_VIP_IDORDERSTATE')
             || !Configuration::deleteByName('OKOM_VIP_CLEAN')
             || !Configuration::deleteByName('OKOM_VIP_IDPRODUCT')
+            || !Configuration::deleteByName('OKOM_VIP_NB_DAY')
             || !parent::uninstall()
             ) {
             return false;
