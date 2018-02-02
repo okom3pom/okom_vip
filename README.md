@@ -15,7 +15,7 @@ When a customer buy a VIP card and the order change to a desired status, the cus
 
 ## Cart Rule
 
-Add a cart rule with condition : Thr Vip card Product and add a free shipping action or other action.
+Add a cart rule with condition : The Vip card Product and add a free shipping action or other action.
 
 Add a cart rule with condition : The VIP Card Group and add a free shipping action or other action.
 

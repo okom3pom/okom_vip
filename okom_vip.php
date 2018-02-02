@@ -31,7 +31,7 @@ class okom_vip extends Module
 {
     private $_html = '';
     private $_postErrors = array();
-
+    
     public function __construct()
     {
         $this->name = 'okom_vip';
@@ -41,9 +41,7 @@ class okom_vip extends Module
         $this->secure_key = Tools::encrypt($this->name);
         $this->bootstrap = true;
         $this->table_name = 'vip';
-
         parent::__construct();
-
         $this->displayName = $this->l('Add customer to the VIP Group');
         $this->description = $this->l('Automatisation pour les cartes VIP selon un id_produit.');
     }
@@ -69,7 +67,6 @@ class okom_vip extends Module
         if (Shop::isFeatureActive()) {
             Shop::setContext(Shop::CONTEXT_ALL);
         }
-        
         if (!parent::install()
             || !$this->_installTable()
             || !$this->registerHook('displayAdminOrderLeft')
@@ -205,7 +202,6 @@ class okom_vip extends Module
                 )
             ),
         );
-        
         $helper = new HelperForm();
         $helper->show_toolbar = false;
         $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
@@ -235,7 +231,6 @@ class okom_vip extends Module
 
     public function getcontent()
     {
-
         $this->_html .= '<h2>'.$this->displayName.'</h2>';
         if (Tools::isSubmit('btnSubmit')) {
             $this->_postValidation();
@@ -269,10 +264,8 @@ class okom_vip extends Module
         if ((int)$params['newOrderStatus']->id == (int)Configuration::get('OKOM_VIP_IDORDERSTATE')) {
             $id_product_vip = false;
             $id_group_vip = array();
-            
             $order = new Order((int)$params[id_order]);
             $customer = new Customer($order->id_customer);
-            
             // Check if customer is VIP
             $groups = $customer->getGroups();
             foreach ($groups as $group) {
@@ -280,12 +273,9 @@ class okom_vip extends Module
                     return false;
                 }
             }
-            
             $id_product_vip = (int)Configuration::get('OKOM_VIP_IDPRODUCT');
             $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
-        
             $products = $order->getCartProducts();
-            
             foreach ($products as $product) {
                 //Fucking table with product_id not id_product
                 if ($product['product_id'] == $id_product_vip) {
@@ -313,13 +303,10 @@ class okom_vip extends Module
     
     public function hookdisplayAdminOrderLeft($params)
     {
-
         $order = new Order((int)Tools::getValue('id_order'));
         $customer = new Customer((int)$order->id_customer);
-
         if (Tools::getValue('vip_add') && Tools::getValue('vip_end')) {
             $customer_vip = $this->isVIP((int)$order->id_customer);
-
             if ($customer_vip == false) {
                 $values[] = array(
                     'id_customer' => (int)$order->id_customer,
@@ -347,9 +334,7 @@ class okom_vip extends Module
                 }
             }
         }
-
         $customer_vip = $this->isVIP((int)$order->id_customer);
-
         if ($customer_vip == false) {
             $vip_add = '0000-00-00';
             $vip_end = '0000-00-00';
@@ -357,9 +342,7 @@ class okom_vip extends Module
             $vip_add = $customer_vip['vip_add'];
             $vip_end = $customer_vip['vip_end'];
         }
-
         $html = $this->printForm($vip_add, $vip_end);
-
         return $html;
     }
     
@@ -376,8 +359,6 @@ class okom_vip extends Module
         }
         $vip_add = '';
         $vip_end = '';
-
-
         if (Tools::getValue('vip_add') && Tools::getValue('vip_end')) {
             $customer_vip = $this->isVIP((int)$params['id_customer']);
 
@@ -398,16 +379,13 @@ class okom_vip extends Module
                     'vip_end' => Tools::getValue('vip_end')
                 );
                 Db::getInstance()->update($this->table_name, $values, 'id_customer = '.(int)$customer->id);
-                
                 if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
                     $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
                     $customer->addGroups($id_group_vip);
                 }
             }
         }
-
         $customer_vip = $this->isVIP((int)$params['id_customer']);
-
         if ($customer_vip == false) {
             $vip_add = '0000-00-00';
             $vip_end = '0000-00-00';
@@ -415,22 +393,18 @@ class okom_vip extends Module
             $vip_add = $customer_vip['vip_add'];
             $vip_end = $customer_vip['vip_end'];
         }
-
         $html = $this->printForm($vip_add, $vip_end);
-        
         return $html;
     }
 
     public function hookShoppingCart($params)
     {
         $customer_vip = $this->isVIP($this->context->customer->id);
-
         if (!$this->context->customer->id || $customer_vip == false) {
-            $product = new Product((int)Configuration::get('OKOM_VIP_IDPRODUCT'));
+            $product = new Product((int)Configuration::get('OKOM_VIP_IDPRODUCT'), true, $this->context->language->id);
             $link = new Link();
-            // 301 but not indexed by google
+            //@TODO Fix Bad Link
             $vip_product_url = $link->getProductLink($product);
-                    
             $this->context->smarty->assign(array(
                 'customer_vip' => $customer_vip,
                 'vip_product_url' => $vip_product_url
@@ -438,20 +412,17 @@ class okom_vip extends Module
 
             return $this->display(__FILE__, 'shopping-cart.tpl');
         }
-
         return false;
     }
 
     public function printForm($vip_add, $vip_end)
     {
-
         $html = '';
         $html .= '
         <div class="col-lg-12">
         <div class="panel">
         <div class="panel-heading">'.$this->l('VIP Customer').'</div>
         <div class="panel-body">';
-
         $html .= '
         <form class="defaultForm form-horizontal" id="edit_vp" name="edit_vp" method="POST">
             <div class="form-group">                                                    
@@ -468,7 +439,6 @@ class okom_vip extends Module
                     <p class="help-block"></p>                                                                  
                 </div>                          
             </div>
-
             <div class="form-group">                                                    
                 <label class="control-label col-lg-3">'.$this->l('Vip Card End : ').'</label>
                 <div class="col-lg-9">
@@ -489,7 +459,6 @@ class okom_vip extends Module
                 </button>
             </div>
         </from>';
-
         $html .= '</div></div></div>';
         $html .= '
         <script type="text/javascript">
