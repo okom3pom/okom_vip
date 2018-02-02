@@ -46,7 +46,9 @@ All members of the VIP group will be removed from the group
 ## TODO 
 
 Move html and js to a tpl file
+
 Check if it's a guest order
+
 Remove VIP card product from cart if customer is VIP
 
 
