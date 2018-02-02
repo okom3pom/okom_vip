@@ -19,7 +19,7 @@
  *
  * @author    Okom3pom <contact@okom3pom.com>
  * @copyright 2008-2018 Okom3pom
- * @version   1.0.7
+ * @version   1.0.9
  * @license   Free
  */
 
@@ -37,7 +37,7 @@ class okom_vip extends Module
         $this->name = 'okom_vip';
         $this->tab = 'other';
         $this->author = 'Okom3pom';
-        $this->version = '1.0.8';
+        $this->version = '1.0.9';
         $this->secure_key = Tools::encrypt($this->name);
         $this->bootstrap = true;
         $this->table_name = 'vip';
@@ -235,6 +235,7 @@ class okom_vip extends Module
 
     public function getcontent()
     {
+
         $this->_html .= '<h2>'.$this->displayName.'</h2>';
         if (Tools::isSubmit('btnSubmit')) {
             $this->_postValidation();
@@ -418,6 +419,27 @@ class okom_vip extends Module
         $html = $this->printForm($vip_add, $vip_end);
         
         return $html;
+    }
+
+    public function hookShoppingCart($params)
+    {
+        $customer_vip = $this->isVIP($this->context->customer->id);
+
+        if (!$this->context->customer->id || $customer_vip == false) {
+            $product = new Product((int)Configuration::get('OKOM_VIP_IDPRODUCT'));
+            $link = new Link();
+            // 301 but not indexed by google
+            $vip_product_url = $link->getProductLink($product);
+                    
+            $this->context->smarty->assign(array(
+                'customer_vip' => $customer_vip,
+                'vip_product_url' => $vip_product_url
+            ));
+
+            return $this->display(__FILE__, 'shopping-cart.tpl');
+        }
+
+        return false;
     }
 
     public function printForm($vip_add, $vip_end)
