@@ -45,7 +45,7 @@ class okom_vipDefaultModuleFrontController extends ModuleFrontController
             }
         }
         // @TODO Fix bad link
-        $product = new Product((int)Configuration::get('OKOM_VIP_IDPRODUCT'));
+        $product = new Product((int)Configuration::get('OKOM_VIP_IDPRODUCT'), true, $this->context->language->id);
         $link = new Link();
         $vip_product_url = $link->getProductLink($product);
                 
