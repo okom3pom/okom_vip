@@ -49,10 +49,10 @@
 <div class="block-center well">			
 			
 {l s='Votre abonnement VIP est terminé depuis le ' mod='okom_vip'} {$customer_vip['vip_end']}<br/>
-{l s='Vous pouvez le renouveler dès maintenant en cliquant ici' mod='okom_vip'}
+{l s='Vous pouvez le renouveler dès maintenant.' mod='okom_vip'}
 <br/><br/>
 
-<a href="{$vip_product_url}">{l s='Devenir membre VIP !' mod='okom_vip'}</a><br/>
+<a class="button button-small btn btn-default" href="{$vip_product_url}"><span>{l s='Devenir membre VIP !' mod='okom_vip'}</span></a><br/><br/>
 
 <img class="img-responsive" src='{$modules_dir}/okom_vip/img/vip.png' alt='{l s='Abonnement VIP expiré' mod='okom_vip'}'>
 
