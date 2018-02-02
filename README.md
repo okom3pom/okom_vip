@@ -13,7 +13,7 @@ When a customer buy a VIP card and the order change to a desired status, the cus
 
 ## Create a VIP group
 
-## Règle de panier !
+## Cart Rule
 
 Add a cart rule with condition : Thr Vip card Product and add a free shipping action or other action.
 
