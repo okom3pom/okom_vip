@@ -15,7 +15,7 @@ When a customer buy a VIP card and the order change to a desired status, the cus
 
 ## Cart Rule
 
-Add a cart rule with condition : Thr Vip card Product and add a free shipping action or other action.
+Add a cart rule with condition : The Vip card Product and add a free shipping action or other action.
 
 Add a cart rule with condition : The VIP Card Group and add a free shipping action or other action.
 
@@ -43,24 +43,16 @@ When you delete the module the vip table is not deleted, you must do it manually
 
 All members of the VIP group will be removed from the group
 
-## Screenshot
-
-![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_mon_compte.png)
-
-
-![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_front_controller.png)
-
-
-![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_config_module.png)
-
-
-![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_admin_order-controller.png)
-
-
-
 ## TODO 
 
 Move html and js to a tpl file
+
+Check if it's a guest order
+
+Remove VIP card product from cart if customer is VIP
+
+Add 2 recall XX days YY days by e-mail
+
 
 # Module Carte VIP pour Prestashop 1.6.X.X && Thirty Bees 1.0.3
 
@@ -107,3 +99,26 @@ L'url est disponible dans la configuration du module.
 
 A la suppression du module la table vip n'est pas supprimée, vous devez le faire manuellement si vous souhaitez effacer la table.
 Tous les membres du groupe VIP seront retirés du groupe
+
+## TODO 
+
+Déplacer le html et je js dans un fichier .tpl
+
+Vérifier si ce n'est pas une commande guest
+
+Supprimer / Bloquer le produit carte vip si le client est VIP
+
+Ajouter un rappel sur les cartes qui vont expirer
+
+## Screenshot
+
+![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_mon_compte.png)
+
+
+![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_front_controller.png)
+
+
+![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_config_module.png)
+
+
+![alt text](https://www.okom3pom.com/dev-modules/image/okom_vip/okom_vip_admin_order-controller.png)

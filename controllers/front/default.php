@@ -26,12 +26,23 @@ include_once(dirname(__FILE__).'/../../okom_vip.php');
 
 class okom_vipDefaultModuleFrontController extends ModuleFrontController
 {
+    public function setMedia()
+    {
+        $module = 'okom_vip';
+        parent::setMedia();
+        $this->addJS(_MODULE_DIR_.$module.'/views/js/jquery.countdown.js');
+        $this->addCSS(_MODULE_DIR_.$module.'/views/css/okom_vip.css');
+    }
+
     public function initContent()
     {
         parent::initContent();
         
         $module = new okom_vip();
-        $customer_vip = $module->isVIP((int)$this->context->customer->id);
+        $customer_vip = $module->isVIP((int)$this->context->customer->id, true);
+        $vip_cards = $module->getVipCards((int)$this->context->customer->id);
+
+        //d($vip_cards);
         
         if ($customer_vip == false) {
             $is_vip = false;
@@ -44,8 +55,8 @@ class okom_vipDefaultModuleFrontController extends ModuleFrontController
                 $exprired = true;
             }
         }
-
-        $product = new Product((int)Configuration::get('OKOM_VIP_IDPRODUCT'));
+        // @TODO Fix bad link
+        $product = new Product((int)Configuration::get('OKOM_VIP_IDPRODUCT'), true, $this->context->language->id);
         $link = new Link();
         $vip_product_url = $link->getProductLink($product);
                 
@@ -53,6 +64,7 @@ class okom_vipDefaultModuleFrontController extends ModuleFrontController
             'customer_vip' => $customer_vip,
             'is_vip' => $is_vip,
             'exprired' => $exprired,
+            'vip_cards' => $vip_cards,
             'vip_product_url' => $vip_product_url
         ));
  

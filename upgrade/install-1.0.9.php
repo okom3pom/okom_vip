@@ -22,23 +22,13 @@
  * @license   Free
  */
 
-include_once('../../config/config.inc.php');
-include_once('okom_vip.php');
-echo 'Start clean old VIP Card<br/><br/>';
-if (Tools::getValue('token') != Tools::encrypt('okom_vip') || !Module::isInstalled('okom_vip')) {
-    echo 'OUPS !';
-    die();
-} else {
-    $module = new okom_vip();
-    $sql = 'SELECT * FROM '._DB_PREFIX_.'vip'.' WHERE NOW() >= vip_end AND expired = 0';
-    $old_vip_cards = Db::getInstance()->ExecuteS($sql);
+function upgrade_module_1_0_9($object)
+{
+    $success = true;
 
-    foreach ($old_vip_cards as $old_vip_card) {
-        Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$old_vip_card['id_customer'].' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
-        $module->setExpired((int)$old_vip_card['id_vip']);
+    if (!$object->isRegisteredInHook('shoppingCart')) {
+        $success &= $object->registerHook('shoppingCart');
     }
 
-    echo date('Y-m-d H:i:00').'<br/>';
-    Configuration::updateValue('OKOM_VIP_CLEAN', date('Y-m-d H:i:00'));
-    echo 'Done';
+    return $success;
 }
