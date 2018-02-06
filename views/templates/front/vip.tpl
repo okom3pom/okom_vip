@@ -36,7 +36,7 @@
 {else if $is_vip == true && $exprired == false}
 
 	<div class="well well-sm">
-		<div style="text-align: center"><h3>{l s='Votre carte VIP et avantage expire dans' mod='okom_vip'} </h3></div>
+		<div style="text-align: center"><h3>{l s='Votre carte VIP et avantages expire dans' mod='okom_vip'} </h3></div>
 		<div id="countdownvip"></div>
 		{l s='Votre carte VIP est valable du' mod='okom_vip'} {$customer_vip['vip_add']} {l s='au' mod='okom_vip'} {$customer_vip['vip_end']}
 		<br/><br/>

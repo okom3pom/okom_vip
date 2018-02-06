@@ -36,5 +36,13 @@ function upgrade_module_1_0_10($object)
             $success = false;
         }
     }
+    $sql = "SHOW COLUMNS FROM ps_vip LIKE 'expired'";
+    $res = Db::getInstance()->executeS($sql);
+    if (!isset($res[0]['Field'])) {
+        $add = "ALTER TABLE `ps_vip` ADD `expired` int(1) NOT NULL default '0';";
+        if (!Db::getInstance()->Execute($add)) {
+            $success = false;
+        }
+    }
     return $success;
 }

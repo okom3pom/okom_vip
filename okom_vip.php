@@ -125,10 +125,11 @@ class okom_vip extends Module
         if (Tools::isSubmit('clean')) {
             $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE NOW() >= vip_end';
             
-            $old_vip_cards = Db::getInstance()->ExecuteS($sql);
+            $old_vip_cards = Db::getInstance()->executeS($sql);
             
             foreach ($old_vip_cards as $old_vip_card) {
                 Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$old_vip_card['id_customer'].' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
+                $this->setExpired((int)$old_vip_card['id_vip']);
             }
             Configuration::updateValue('OKOM_VIP_CLEAN', date('Y-m-d H:i:00'));
         }
@@ -315,22 +316,25 @@ class okom_vip extends Module
                     $customer->addGroups($id_group_vip);
                 } else {
                     Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$order->id_customer.' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
+                    $this->setExpired((int)$customer_vip['id_vip']);
                 }
             } else {
-                $values = array(
-                    'vip_add' => Tools::getValue('vip_add'),
-                    'vip_end' => Tools::getValue('vip_end')
-                );
-                Db::getInstance()->update($this->table_name, $values, 'id_customer = '.(int)$order->id_customer);
                 if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
                     $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
                     $customer->addGroups($id_group_vip);
+                    $values[] = array(
+                        'id_customer' => (int)$order->id_customer,
+                        'vip_add' => Tools::getValue('vip_add'),
+                        'vip_end' => Tools::getValue('vip_end')
+                    );
+                    Db::getInstance()->insert($this->table_name, $values);
                 } else {
                     Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$order->id_customer.' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
+                    $this->setExpired((int)$customer_vip['id_vip']);
                 }
             }
         }
-        $customer_vip = $this->isVIP((int)$order->id_customer);
+        $customer_vip = $this->isVIP((int)$order->id_customer, true);
         if ($customer_vip == false) {
             $vip_add = '0000-00-00';
             $vip_end = '0000-00-00';
@@ -368,6 +372,9 @@ class okom_vip extends Module
                 if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
                     $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
                     $customer->addGroups($id_group_vip);
+                } else {
+                    Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$order->id_customer.' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
+                    $this->setExpired((int)$old_vip_card['id_vip']);
                 }
             } else {
                 $values = array(
@@ -378,6 +385,9 @@ class okom_vip extends Module
                 if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
                     $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
                     $customer->addGroups($id_group_vip);
+                } else {
+                    Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$order->id_customer.' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
+                    $this->setExpired((int)$old_vip_card['id_vip']);
                 }
             }
         }
@@ -401,7 +411,7 @@ class okom_vip extends Module
 
     public function hookShoppingCart($params)
     {
-        $customer_vip = $this->isVIP($this->context->customer->id);
+        $customer_vip = $this->isVIP($this->context->customer->id, true);
         if ($customer_vip == false) {
             $is_vip = false;
             $exprired = true;
@@ -503,14 +513,31 @@ class okom_vip extends Module
         return $html;
     }
     
-    public function isVIP($id_customer)
+    public function isVIP($id_customer, $not_expired = false)
     {
         $is_vip = false;
         $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE id_customer = '.(int)$id_customer.' ';
+
+        if ($not_expired == true) {
+            $sql .= 'AND expired = 0 ';
+        }
+
+        $sql .= 'ORDER BY id_vip DESC';
         $result = Db::getInstance()->executeS($sql);
+
         if ($result) {
             $is_vip = $result[0];
         }
+
         return $is_vip;
+    }
+
+    public function setExpired($id_vip)
+    {
+        if (Db::getInstance()->execute('UPDATE `'._DB_PREFIX_.$this->table_name.'` SET expired = 1 WHERE id_vip = '.(int)$id_vip.' ')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

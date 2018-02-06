@@ -39,7 +39,7 @@ class okom_vipDefaultModuleFrontController extends ModuleFrontController
         parent::initContent();
         
         $module = new okom_vip();
-        $customer_vip = $module->isVIP((int)$this->context->customer->id);
+        $customer_vip = $module->isVIP((int)$this->context->customer->id, true);
         
         if ($customer_vip == false) {
             $is_vip = false;
