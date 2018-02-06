@@ -393,22 +393,37 @@ class okom_vip extends Module
         return $html;
     }
 
+    public function hookHeader()
+    {
+        $this->context->controller->addJS(_MODULE_DIR_.$this->name.'/views/js/jquery.countdown.js');
+        $this->context->controller->addCSS(_MODULE_DIR_.$this->name.'/views/css/okom_vip.css');
+    }
+
     public function hookShoppingCart($params)
     {
         $customer_vip = $this->isVIP($this->context->customer->id);
-        if (!$this->context->customer->id || $customer_vip == false) {
-            $product = new Product((int)Configuration::get('OKOM_VIP_IDPRODUCT'), true, $this->context->language->id);
-            $link = new Link();
-            //@TODO Fix Bad Link
-            $vip_product_url = $link->getProductLink($product);
-            $this->context->smarty->assign(array(
-                'customer_vip' => $customer_vip,
-                'vip_product_url' => $vip_product_url
-            ));
-
-            return $this->display(__FILE__, 'shopping-cart.tpl');
+        if ($customer_vip == false) {
+            $is_vip = false;
+            $exprired = true;
+        } else {
+            $is_vip = true;
+            if (date('Y-m-d') < $customer_vip['vip_end']) {
+                $exprired = false;
+            } else {
+                $exprired = true;
+            }
         }
-        return false;
+        $product = new Product((int)Configuration::get('OKOM_VIP_IDPRODUCT'), true, $this->context->language->id);
+        $link = new Link();
+        //@TODO Fix Bad Link
+        $vip_product_url = $link->getProductLink($product);
+        $this->context->smarty->assign(array(
+            'customer_vip' => $customer_vip,
+            'exprired' => $exprired,
+            'is_vip' => $is_vip,
+            'vip_product_url' => $vip_product_url
+        ));
+        return $this->display(__FILE__, 'shopping-cart.tpl');
     }
 
     public function printForm($vip_add, $vip_end)

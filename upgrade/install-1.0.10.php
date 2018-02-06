@@ -25,6 +25,9 @@
 function upgrade_module_1_0_10($object)
 {
     $success = true;
+    if (!$object->isRegisteredInHook('Header')) {
+        $object->registerHook('Header');
+    }
     $sql = "SHOW COLUMNS FROM ps_vip LIKE 'recall'";
     $res = Db::getInstance()->executeS($sql);
     if (!isset($res[0]['Field'])) {
