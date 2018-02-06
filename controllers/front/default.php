@@ -26,6 +26,14 @@ include_once(dirname(__FILE__).'/../../okom_vip.php');
 
 class okom_vipDefaultModuleFrontController extends ModuleFrontController
 {
+    public function setMedia()
+    {
+        $module = 'okom_vip';
+        parent::setMedia();
+        $this->addJS(_MODULE_DIR_.$module.'/views/js/jquery.countdown.js');
+        $this->addCSS(_MODULE_DIR_.$module.'/views/css/okom_vip.css');
+    }
+
     public function initContent()
     {
         parent::initContent();

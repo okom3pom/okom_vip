@@ -35,7 +35,34 @@
 
 {else if $is_vip == true && $exprired == false}
 
-<div class="block-center well">			
+<div class="block-center well">	
+
+	<div style="text-align: center"><h2>Votre carte expire dans</h2></div>
+		<div id="countdownvip"></div>
+		{assign var="date_vf" value="-"|explode:$customer_vip['vip_end']}
+		{assign var="day" value=" "|explode:$date_vf[2]}
+		{assign var="hms" value=":"|explode:$day[1]} 
+
+<script type="text/javascript">
+	$(function(){
+		var ts = new Date({$date_vf[0]} ,{$date_vf[1]-1} , {$day[0]}, {$hms[0]}, {$hms[1]} , 00 );
+		var newYear = true;		
+		if((new Date()) > ts){
+			ts = (new Date()).getTime() + 10*24*60*60*1000;
+			newYear = false;
+		}			
+		$('#countdownvip').countdown({
+			timestamp	: ts,
+			callback	: function(days, hours, minutes, seconds){
+				var message = "";
+				message += days + " jour" + ( days == 1 ? '':'s' ) + ", ";
+				message += hours + " heure" + ( hours==1 ? '':'s' ) + ", ";
+				message += minutes + " minute" + ( minutes==1 ? '':'s' ) + " et ";
+				message += seconds + " seconde" + ( seconds==1 ? '':'s' );
+			}
+		});		
+	});
+</script>		
 			
 {l s='Votre carte VIP est valable du' mod='okom_vip'} {$customer_vip['vip_add']} {l s='au' mod='okom_vip'} {$customer_vip['vip_end']}
 <br/><br/>

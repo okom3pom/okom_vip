@@ -19,13 +19,9 @@
  *
  * @author    Okom3pom <contact@okom3pom.com>
  * @copyright 2008-2018 Okom3pom
- * @version   1.0.9
+ * @version   1.0.10
  * @license   Free
  */
-
-if (!defined('_PS_VERSION_') && !defined('_TB_VERSION_')) {
-    exit;
-}
 
 class okom_vip extends Module
 {
@@ -37,7 +33,7 @@ class okom_vip extends Module
         $this->name = 'okom_vip';
         $this->tab = 'other';
         $this->author = 'Okom3pom';
-        $this->version = '1.0.9';
+        $this->version = '1.0.10';
         $this->secure_key = Tools::encrypt($this->name);
         $this->bootstrap = true;
         $this->table_name = 'vip';
