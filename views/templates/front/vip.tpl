@@ -38,7 +38,13 @@
 	<div class="well well-sm">
 		<div style="text-align: center"><h3>{l s='Votre carte VIP et avantages expire dans' mod='okom_vip'} </h3></div>
 		<div id="countdownvip"></div>
-		{l s='Votre carte VIP est valable du' mod='okom_vip'} {$customer_vip['vip_add']} {l s='au' mod='okom_vip'} {$customer_vip['vip_end']}
+		Ma/Mes Carte(s) VIP
+		<br/><br/>
+		{foreach $vip_cards item='vip_card'}
+
+		<li>Abonnement du {$vip_card.vip_add} au {$vip_card.vip_end} {$vip_card.expired}</li>
+
+		{/foreach}	
 		<br/><br/>
 		<img class="img-responsive" src='{$modules_dir}/okom_vip/img/vip.png' alt='{l s='Vous êtes client VIP' mod='okom_vip'}'>
 		{assign var="date_vf" value="-"|explode:$customer_vip['vip_end']}

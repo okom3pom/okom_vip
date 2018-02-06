@@ -40,6 +40,9 @@ class okom_vipDefaultModuleFrontController extends ModuleFrontController
         
         $module = new okom_vip();
         $customer_vip = $module->isVIP((int)$this->context->customer->id, true);
+        $vip_cards = $module->getVipCards((int)$this->context->customer->id);
+
+        //d($vip_cards);
         
         if ($customer_vip == false) {
             $is_vip = false;
@@ -61,6 +64,7 @@ class okom_vipDefaultModuleFrontController extends ModuleFrontController
             'customer_vip' => $customer_vip,
             'is_vip' => $is_vip,
             'exprired' => $exprired,
+            'vip_cards' => $vip_cards,
             'vip_product_url' => $vip_product_url
         ));
  
