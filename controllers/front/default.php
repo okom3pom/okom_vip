@@ -37,12 +37,9 @@ class okom_vipDefaultModuleFrontController extends ModuleFrontController
     public function initContent()
     {
         parent::initContent();
-        
         $module = new okom_vip();
         $customer_vip = $module->isVIP((int)$this->context->customer->id, true);
         $vip_cards = $module->getVipCards((int)$this->context->customer->id);
-
-        //d($vip_cards);
         
         if ($customer_vip == false) {
             $is_vip = false;
@@ -55,6 +52,7 @@ class okom_vipDefaultModuleFrontController extends ModuleFrontController
                 $exprired = true;
             }
         }
+
         // @TODO Fix bad link
         $product = new Product((int)Configuration::get('OKOM_VIP_IDPRODUCT'), true, $this->context->language->id);
         $link = new Link();
