@@ -15,6 +15,7 @@ When a customer buy a VIP card and the order change to a desired status, the cus
 - All cart rule and specific price available from VIP 
 - Count Down VIP Card
 - ShoppingCart hook to propose VIP cards
+- Move Vipcard to a model
 - See TODO for next featured and bug fix
 
 ## Installation
@@ -55,13 +56,13 @@ All members of the VIP group will be removed from the group
 
 ## TODO 
 
-Move html and js to a tpl file
+- Move html and js to a tpl file
 
-Check if it's a guest order
+- Check if it's a guest order
 
-Remove VIP card product from cart if customer is VIP
+- Remove VIP card product from cart if customer is VIP
 
-Add 2 recall XX days YY days by e-mail
+- Add 2 recall XX days YY days by e-mail
 
 
 # Module Carte VIP pour Prestashop 1.6.X.X && Thirty Bees 1.0.3

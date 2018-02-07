@@ -338,7 +338,7 @@ class okom_vip extends Module
         }
 
         $customer_vip = $this->isVIP((int)$order->id_customer, true);
-        
+
         if ($customer_vip == false) {
             $vip_add = '0000-00-00';
             $vip_end = '0000-00-00';
@@ -546,7 +546,6 @@ class okom_vip extends Module
 
     public function getVipCards($id_customer)
     {
-        $is_vip = false;
         $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE id_customer = '.(int)$id_customer.' ';
         $sql .= 'ORDER BY id_vip DESC';
         $result = Db::getInstance()->executeS($sql);
