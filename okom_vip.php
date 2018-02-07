@@ -123,7 +123,7 @@ class okom_vip extends Module
         }
         // Clean Old Vip Card
         if (Tools::isSubmit('clean')) {
-            $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE NOW() >= vip_end';
+            $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE NOW() >= vip_end AND expired = 0';
             
             $old_vip_cards = Db::getInstance()->executeS($sql);
             
