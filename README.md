@@ -8,12 +8,19 @@ One on a VIP Group
 
 When a customer buy a VIP card and the order change to a desired status, the customer automatically enters in the VIP Group for XX days. 
 
+## Features
 
-## Create a VIP card product
+1. Vip Cards history
+2. Add Vip Cards from back office
+3. All cart rule and specific price available from VIP 
 
-## Create a VIP group
+## Installation
 
-## Cart Rule
+#### Create a VIP card product
+
+#### Create a VIP group
+
+#### Cart Rule
 
 Add a cart rule with condition : The Vip card Product and add a free shipping action or other action.
 
