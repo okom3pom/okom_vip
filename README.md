@@ -61,6 +61,7 @@ All members of the VIP group will be removed from the group
 - Add 2 recall XX days YY days by e-mail
 - Move Vipcard to a model
 - Bug fix VipCard expired or not expired but not 0 or 1 in vip.tpl
+- Fix tanslation Hard coded
 
 # Module Carte VIP pour Prestashop 1.6.X.X && Thirty Bees 1.0.3
 
