@@ -8,12 +8,22 @@ One on a VIP Group
 
 When a customer buy a VIP card and the order change to a desired status, the customer automatically enters in the VIP Group for XX days. 
 
+## Features
 
-## Create a VIP card product
+- Vip Cards history
+- Add Vip Cards from back office
+- All cart rule and specific price available from VIP 
+- Count Down VIP Card
+- ShoppingCart hook to propose VIP cards
+- See TODO for next featured and bug fix
 
-## Create a VIP group
+## Installation
 
-## Cart Rule
+#### Create a VIP card product
+
+#### Create a VIP group
+
+#### Cart Rule
 
 Add a cart rule with condition : The Vip card Product and add a free shipping action or other action.
 
@@ -45,14 +55,14 @@ All members of the VIP group will be removed from the group
 
 ## TODO 
 
-Move html and js to a tpl file
-
-Check if it's a guest order
-
-Remove VIP card product from cart if customer is VIP
-
-Add 2 recall XX days YY days by e-mail
-
+- Move html and js to a tpl file
+- Check if it's a guest order
+- Remove VIP card product from cart if customer is VIP
+- Add 2 recall XX days YY days by e-mail
+- Move Vipcard to a model
+- Bug fix VipCard expired or not expired but not 0 or 1 in vip.tpl
+- Fix tanslation Hard coded
+- Fix Table name in UPGRADE
 
 # Module Carte VIP pour Prestashop 1.6.X.X && Thirty Bees 1.0.3
 

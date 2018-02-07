@@ -214,7 +214,6 @@ class okom_vip extends Module
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id
         );
-
         return $helper->generateForm($fields_form);
     }
 
@@ -270,9 +269,11 @@ class okom_vip extends Module
                     return false;
                 }
             }
+
             $id_product_vip = (int)Configuration::get('OKOM_VIP_IDPRODUCT');
             $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
             $products = $order->getCartProducts();
+
             foreach ($products as $product) {
                 //Fucking table with product_id not id_product
                 if ($product['product_id'] == $id_product_vip) {
@@ -302,6 +303,7 @@ class okom_vip extends Module
     {
         $order = new Order((int)Tools::getValue('id_order'));
         $customer = new Customer((int)$order->id_customer);
+
         if (Tools::getValue('vip_add') && Tools::getValue('vip_end')) {
             $customer_vip = $this->isVIP((int)$order->id_customer);
             if ($customer_vip == false) {
@@ -334,7 +336,9 @@ class okom_vip extends Module
                 }
             }
         }
+
         $customer_vip = $this->isVIP((int)$order->id_customer, true);
+
         if ($customer_vip == false) {
             $vip_add = '0000-00-00';
             $vip_end = '0000-00-00';
@@ -342,6 +346,7 @@ class okom_vip extends Module
             $vip_add = $customer_vip['vip_add'];
             $vip_end = $customer_vip['vip_end'];
         }
+
         $html = $this->printForm($vip_add, $vip_end);
         return $html;
     }
@@ -354,11 +359,14 @@ class okom_vip extends Module
     public function hookAdminCustomers($params)
     {
         $customer = new Customer((int)$params['id_customer']);
+
         if ($customer && !Validate::isLoadedObject($customer)) {
             die($this->l('Incorrect Customer object.'));
         }
+
         $vip_add = '';
         $vip_end = '';
+
         if (Tools::getValue('vip_add') && Tools::getValue('vip_end')) {
             $customer_vip = $this->isVIP((int)$customer->id);
             if ($customer_vip == false) {
@@ -392,6 +400,7 @@ class okom_vip extends Module
             }
         }
         $customer_vip = $this->isVIP((int)$order->id_customer, true);
+
         if ($customer_vip == false) {
             $vip_add = '0000-00-00';
             $vip_end = '0000-00-00';
@@ -399,6 +408,7 @@ class okom_vip extends Module
             $vip_add = $customer_vip['vip_add'];
             $vip_end = $customer_vip['vip_end'];
         }
+
         $html = $this->printForm($vip_add, $vip_end);
         return $html;
     }
@@ -412,6 +422,7 @@ class okom_vip extends Module
     public function hookShoppingCart($params)
     {
         $customer_vip = $this->isVIP($this->context->customer->id, true);
+
         if ($customer_vip == false) {
             $is_vip = false;
             $exprired = true;
@@ -423,6 +434,7 @@ class okom_vip extends Module
                 $exprired = true;
             }
         }
+
         $product = new Product((int)Configuration::get('OKOM_VIP_IDPRODUCT'), true, $this->context->language->id);
         $link = new Link();
         //@TODO Fix Bad Link
@@ -534,9 +546,7 @@ class okom_vip extends Module
 
     public function getVipCards($id_customer)
     {
-        $is_vip = false;
         $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE id_customer = '.(int)$id_customer.' ';
-
         $sql .= 'ORDER BY id_vip DESC';
         $result = Db::getInstance()->executeS($sql);
 
