@@ -42,7 +42,7 @@
 		<br/><br/>
 		{foreach $vip_cards item='vip_card'}
 
-		<li>Abonnement du {$vip_card.vip_add} au {$vip_card.vip_end} {$vip_card.expired}</li>
+		<li>{if $vip_card.expired == 0}<i class="icon-check"></i>{else}<i class="icon-remove"></i>{/if} Abonnement du {$vip_card.vip_add} au {$vip_card.vip_end}</li>
 
 		{/foreach}	
 		<br/><br/>
