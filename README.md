@@ -14,6 +14,7 @@ When a customer buy a VIP card and the order change to a desired status, the cus
 - Add Vip Cards from back office
 - All cart rule and specific price available from VIP 
 - Count Down VIP Card
+- ShoppingCart hook to propose VIP cards
 - See TODO for next featured and bug fix
 
 ## Installation
