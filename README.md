@@ -10,9 +10,11 @@ When a customer buy a VIP card and the order change to a desired status, the cus
 
 ## Features
 
-1. Vip Cards history
-2. Add Vip Cards from back office
-3. All cart rule and specific price available from VIP 
+- Vip Cards history
+- Add Vip Cards from back office
+- All cart rule and specific price available from VIP 
+- Count Down VIP Card
+- See TODO for next featured and bug fix
 
 ## Installation
 
