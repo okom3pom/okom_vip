@@ -323,7 +323,7 @@ class okom_vip extends Module
         // UPDATE a VIP CARD
         if (Tools::getValue('vip_add') && Tools::getValue('vip_end') && Tools::getValue('id_vip')  && Tools::isSubmit('submit_edit_vip')) {
             $customer_vip = $this->isVIP((int)$order->id_customer);
-            //if ($customer_vip == false) {
+
             if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
                 $expired = 0;
                 $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
@@ -335,10 +335,12 @@ class okom_vip extends Module
             $values = array(
                 'vip_add' => Tools::getValue('vip_add'),
                 'vip_end' => Tools::getValue('vip_end'),
-                'expired' => $expired
+                'expired' => $expired,
+                'recall' => 0
             );
             Db::getInstance()->update($this->table_name, $values, ' id_vip = '.(int)Tools::getValue('id_vip').' AND id_customer = '.(int)$order->id_customer);
-/*
+            /*
+            if ($customer_vip == false) {
                 $values[] = array(
                     'id_customer' => (int)$order->id_customer,
                     'vip_add' => Tools::getValue('vip_add'),
