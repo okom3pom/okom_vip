@@ -44,6 +44,8 @@ if (Tools::getValue('token') != Tools::encrypt('okom_vip') || !Module::isInstall
     Configuration::updateValue('OKOM_VIP_CLEAN', date('Y-m-d H:i:00'));
     echo 'Done<hr/>';
 
+    // Check if a VIP customer is not in the GROUP
+
     // Send Recall for vip card
     $first_recall_date = date('Y-m-d H:i:00', strtotime(date('Y-m-d H:i:00').' + 15 DAY'));
     $second_recall_date = date('Y-m-d H:i:00', strtotime(date('Y-m-d H:i:00').' + 7 DAY'));

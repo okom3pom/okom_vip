@@ -55,10 +55,9 @@ All members of the VIP group will be removed from the group
 
 ## TODO 
 
-- Add option : Add or Update VIP Cards ... 
 - Move html and js to a tpl file
 - Check if it's a guest order
-- Remove VIP card product from cart if customer is VIP
+- Remove VIP card product from cart if customer is VIP ?
 - Move Vipcard to a model
 - Fix tanslation Hard coded
 
