@@ -566,4 +566,13 @@ class okom_vip extends Module
             return false;
         }
     }
+
+    public function setRecalled($id_vip)
+    {
+        if (Db::getInstance()->execute('UPDATE `'._DB_PREFIX_.$this->table_name.'` SET recall = 2 WHERE id_vip = '.(int)$id_vip.' ')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
