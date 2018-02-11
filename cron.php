@@ -51,7 +51,7 @@ if (Tools::getValue('token') != Tools::encrypt('okom_vip') || !Module::isInstall
     echo 'First Recall date : '.$first_recall_date.'<br/>';
     echo 'Second Recall date : '.$second_recall_date.'<br/>';
 
-    $sql = 'SELECT * FROM '._DB_PREFIX_.'vip'.' WHERE \''.$first_recall_date.'\' >= vip_end AND expired = 0 AND recall != 2';
+    $sql = 'SELECT * FROM '._DB_PREFIX_.'vip'.' WHERE \''.$first_recall_date.'\' >= vip_end AND expired = 0 AND recall = 0';
     $recalls = Db::getInstance()->ExecuteS($sql);
 
     $id_lang = (int)Configuration::get('PS_LANG_DEFAULT');

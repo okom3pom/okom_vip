@@ -29,19 +29,19 @@ function upgrade_module_1_0_10($object)
     if (!$object->isRegisteredInHook('Header')) {
         $object->registerHook('Header');
     }
-    $sql = "SHOW COLUMNS FROM ps_vip LIKE 'recall'";
+    $sql = "SHOW COLUMNS FROM "._DB_PREFIX_.$table_name." LIKE 'recall'";
     $res = Db::getInstance()->executeS($sql);
     if (!isset($res[0]['Field'])) {
-        $add = "ALTER TABLE `'._DB_PREFIX_.$table_name.'`  ADD `recall` int(1) NOT NULL default '0';";
+        $add = "ALTER TABLE `"._DB_PREFIX_.$table_name."`  ADD `recall` int(1) NOT NULL default '0';";
         if (!Db::getInstance()->Execute($add)) {
             $success = false;
             return $success;
         }
     }
-    $sql = "SHOW COLUMNS FROM ps_vip LIKE 'expired'";
+    $sql = "SHOW COLUMNS FROM "._DB_PREFIX_.$table_name." LIKE 'expired'";
     $res = Db::getInstance()->executeS($sql);
     if (!isset($res[0]['Field'])) {
-        $add = "ALTER TABLE `'._DB_PREFIX_.$table_name.'` ADD `expired` int(1) NOT NULL default '0';";
+        $add = "ALTER TABLE `"._DB_PREFIX_.$table_name."` ADD `expired` int(1) NOT NULL default '0';";
         if (!Db::getInstance()->Execute($add)) {
             $success = false;
             return $success;
