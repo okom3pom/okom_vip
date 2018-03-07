@@ -550,7 +550,7 @@ class okom_vip extends Module
                     <i class="process-icon-save"></i> '.$this->l('Add').'
                 </button>
             </div>
-        </from>';
+        </form>';
         $html .= '</div></div></div>';
         $html .= '
         <script type="text/javascript">
