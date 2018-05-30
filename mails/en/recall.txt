@@ -1,0 +1,16 @@
+Bonjour,
+
+{lastname} {firstname} vous pose une question sur 
+
+{product} : {product_link}
+
+Le client à laissé un commentaire : 
+{message}
+
+L'adresse email du client est : {email}
+
+{shop_name} - {shop_url}
+
+
+
+{shop_url} 
