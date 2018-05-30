@@ -19,7 +19,7 @@
 <h1 class="page-heading bottom-indent">{l s='Ma Carte VIP' mod='okom_vip'}</h1>
 
 
-{if $is_vip == false }
+{if $is_vip == false && !isset($vip_cards)}
 
 	<div class="well well-sm">
 		{l s='Pas encore membre VIP, profitez d\'avantages avec notre carte VIP !' mod='okom_vip'}
@@ -36,8 +36,7 @@
 {else if $is_vip == true && $exprired == false}
 
 	<div class="well well-sm">
-		<div style="text-align: center"><h3>{l s='Votre carte VIP et avantages expire dans' mod='okom_vip'} </h3></div>
-		<div id="countdownvip"></div>
+		<div style="text-align: center"><h3>{l s='Votre carte VIP et avantages expire le' mod='okom_vip'} {$customer_vip['vip_end']}</h3></div>
 		Ma/Mes Carte(s) VIP
 		<br/><br/>
 		{foreach $vip_cards item='vip_card'}
@@ -47,38 +46,27 @@
 		{/foreach}	
 		<br/><br/>
 		<img class="img-responsive" src='{$modules_dir}/okom_vip/img/vip.png' alt='{l s='Vous êtes client VIP' mod='okom_vip'}'>
-		{assign var="date_vf" value="-"|explode:$customer_vip['vip_end']}
-		{assign var="day" value=" "|explode:$date_vf[2]}
-		{assign var="hms" value=":"|explode:$day[1]} 
 	</div>
-	<script type="text/javascript">
-		$(function(){
-			var ts = new Date({$date_vf[0]} ,{$date_vf[1]-1} , {$day[0]}, {$hms[0]}, {$hms[1]} , 00 );
-			var newYear = true;		
-			if((new Date()) > ts){
-				ts = (new Date()).getTime() + 10*24*60*60*1000;
-				newYear = false;
-			}			
-			$('#countdownvip').countdown({
-				timestamp	: ts,
-				callback	: function(days, hours, minutes, seconds){
-					var message = "";
-					message += days + " jour" + ( days == 1 ? '':'s' ) + ", ";
-					message += hours + " heure" + ( hours==1 ? '':'s' ) + ", ";
-					message += minutes + " minute" + ( minutes==1 ? '':'s' ) + " et ";
-					message += seconds + " seconde" + ( seconds==1 ? '':'s' );
-				}
-			});		
-		});
-	</script>
 
-{else}
+	{else}
 
 	<div class="well well-sm">		
-		{l s='Votre abonnement VIP est terminé depuis le ' mod='okom_vip'} {$customer_vip['vip_end']}<br/>
+		{l s='Votre abonnement VIP est terminé.' mod='okom_vip'}<br/>
 		{l s='Vous pouvez le renouveler dès maintenant.' mod='okom_vip'}
 		<br/><br/>
-		<a class="button button-small btn btn-default" href="{$vip_product_url}"><span>{l s='Devenir membre VIP !' mod='okom_vip'}</span></a><br/><br/>
+		<a class="button button-small btn btn-default" href="{$vip_product_url}"><span>{l s='Devenir membre VIP !' mod='okom_vip'}</span></a>
+		<br/><br/>
+
+		{l s='My old vip Cards' mod='okom_vip'}
+		{foreach $vip_cards item='vip_card'}
+
+		<li>{if $vip_card.expired == 0}<i class="icon-check"></i>{else}<i class="icon-remove"></i>{/if} Abonnement du {$vip_card.vip_add} au {$vip_card.vip_end}</li>
+
+		{/foreach}			
+
+
+		<br/><br/>
+		
 		<img class="img-responsive" src='{$modules_dir}/okom_vip/img/vip.png' alt='{l s='Abonnement VIP expiré' mod='okom_vip'}'>
 	</div>
 

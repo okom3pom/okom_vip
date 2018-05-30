@@ -30,7 +30,6 @@ class okom_vipDefaultModuleFrontController extends ModuleFrontController
     {
         $module = 'okom_vip';
         parent::setMedia();
-        $this->addJS(_MODULE_DIR_.$module.'/views/js/jquery.countdown.js');
         $this->addCSS(_MODULE_DIR_.$module.'/views/css/okom_vip.css');
     }
 
