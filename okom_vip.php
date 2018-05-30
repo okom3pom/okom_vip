@@ -33,7 +33,7 @@ class okom_vip extends Module
         $this->name = 'okom_vip';
         $this->tab = 'other';
         $this->author = 'Okom3pom';
-        $this->version = '1.0.10';
+        $this->version = '1.0.1';
         $this->secure_key = Tools::encrypt($this->name);
         $this->bootstrap = true;
         $this->table_name = 'vip';
@@ -49,6 +49,8 @@ class okom_vip extends Module
                 `id_customer` INT (12) NOT NULL,
                 `vip_add` DATETIME NOT NULL,
                 `vip_end` DATETIME NOT NULL,
+                `recall` int(1) NOT NULL DEFAULT "0",
+                `expired` int(1) NOT NULL DEFAULT "0",
                 PRIMARY KEY (`id_vip`)
                 ) ENGINE ='._MYSQL_ENGINE_ .' DEFAULT CHARSET=utf8';
         if (!Db::getInstance()->Execute($sql)) {
@@ -123,7 +125,7 @@ class okom_vip extends Module
         }
         // Clean Old Vip Card
         if (Tools::isSubmit('clean')) {
-            $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE NOW() >= vip_end';
+            $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE NOW() >= vip_end AND expired = 0';
             
             $old_vip_cards = Db::getInstance()->executeS($sql);
             
@@ -296,6 +298,7 @@ class okom_vip extends Module
                 }
             }
         }
+        
         return true;
     }
     
@@ -304,8 +307,47 @@ class okom_vip extends Module
         $order = new Order((int)Tools::getValue('id_order'));
         $customer = new Customer((int)$order->id_customer);
 
-        if (Tools::getValue('vip_add') && Tools::getValue('vip_end')) {
+
+        // DELETE a VIP Cards
+        if (Tools::getValue('id_vip') > 0 && Tools::isSubmit('submit_delete_vip')) {
+            $this->deleteVipCard((int)Tools::getValue('id_vip'));
+        }
+
+        // ADD a VIP Cards
+        if (Tools::getValue('vip_add') && Tools::getValue('vip_end') && Tools::isSubmit('submit_add_vip')) {
+            // ADD to group only if vip_end > Now
+            if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
+                $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
+                $customer->addGroups($id_group_vip);
+            }
+            $values[] = array(
+                'id_customer' => (int)$order->id_customer,
+                'vip_add' => Tools::getValue('vip_add'),
+                'vip_end' => Tools::getValue('vip_end')
+            );
+            Db::getInstance()->insert($this->table_name, $values);
+        }
+
+        // UPDATE a VIP CARD
+        if (Tools::getValue('vip_add') && Tools::getValue('vip_end') && Tools::getValue('id_vip')  && Tools::isSubmit('submit_edit_vip')) {
             $customer_vip = $this->isVIP((int)$order->id_customer);
+
+            if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
+                $expired = 0;
+                $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
+                $customer->addGroups($id_group_vip);
+            } else {
+                $expired = 1;
+            }
+
+            $values = array(
+                'vip_add' => Tools::getValue('vip_add'),
+                'vip_end' => Tools::getValue('vip_end'),
+                'expired' => $expired,
+                'recall' => 0
+            );
+            Db::getInstance()->update($this->table_name, $values, ' id_vip = '.(int)Tools::getValue('id_vip').' AND id_customer = '.(int)$order->id_customer);
+            /*
             if ($customer_vip == false) {
                 $values[] = array(
                     'id_customer' => (int)$order->id_customer,
@@ -320,7 +362,7 @@ class okom_vip extends Module
                     Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$order->id_customer.' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
                     $this->setExpired((int)$customer_vip['id_vip']);
                 }
-            } else {
+            /*} else {
                 if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
                     $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
                     $customer->addGroups($id_group_vip);
@@ -334,7 +376,7 @@ class okom_vip extends Module
                     Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$order->id_customer.' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
                     $this->setExpired((int)$customer_vip['id_vip']);
                 }
-            }
+            }*/
         }
 
         $customer_vip = $this->isVIP((int)$order->id_customer, true);
@@ -347,7 +389,7 @@ class okom_vip extends Module
             $vip_end = $customer_vip['vip_end'];
         }
 
-        $html = $this->printForm($vip_add, $vip_end);
+        $html = $this->printForm($vip_add, $vip_end, $this->getVipCards((int)$order->id_customer));
         return $html;
     }
     
@@ -415,7 +457,6 @@ class okom_vip extends Module
 
     public function hookHeader()
     {
-        $this->context->controller->addJS(_MODULE_DIR_.$this->name.'/views/js/jquery.countdown.js');
         $this->context->controller->addCSS(_MODULE_DIR_.$this->name.'/views/css/okom_vip.css');
     }
 
@@ -448,8 +489,16 @@ class okom_vip extends Module
         return $this->display(__FILE__, 'shopping-cart.tpl');
     }
 
-    public function printForm($vip_add, $vip_end)
+    public function printForm($vip_add, $vip_end, $vip_cards)
     {
+        $option = '';
+        
+        if ($vip_cards) {
+            foreach ($vip_cards as $vip_card) {
+                $option .= '<option data-add="'.$vip_card['vip_add'].'" data-end="'.$vip_card['vip_end'].'" value="'.$vip_card['id_vip'].'">'.$vip_card['id_vip'].' : '.$vip_card['vip_add'].' to '.$vip_card['vip_end'].'</option>';
+            }
+        }
+
         $html = '';
         $html .= '
         <div class="col-lg-12">
@@ -459,10 +508,24 @@ class okom_vip extends Module
         $html .= '
         <form class="defaultForm form-horizontal" id="edit_vp" name="edit_vp" method="POST">
             <div class="form-group">                                                    
+                <label class="control-label col-lg-3">'.$this->l('Vip Card: ').'</label>                         
+                <div class="col-lg-9">                  
+                    <div class="row">
+                        <div class="input-group col-lg-6">
+                            <select id="id_vip" class="form-control" name="id_vip">
+                                <option value="0">'.$this->l('Create or Select VIP Card for update').'</option>
+                                '.$option.'
+                            </select>
+                        </div>
+                    </div>                          
+                    <p class="help-block"></p>                                                                  
+                </div>                          
+            </div>
+            <div class="form-group">                                                    
                 <label class="control-label col-lg-3">'.$this->l('Vip Card Start : ').'</label>                         
                 <div class="col-lg-9">                  
                     <div class="row">
-                        <div class="input-group col-lg-4">
+                        <div class="input-group col-lg-6">
                             <input id="vip_add" type="text" data-hex="true" class="datetimepicker" name="vip_add" value="'.$vip_add.'">
                             <span class="input-group-addon">
                                 <i class="icon-calendar-empty"></i>
@@ -476,7 +539,7 @@ class okom_vip extends Module
                 <label class="control-label col-lg-3">'.$this->l('Vip Card End : ').'</label>
                 <div class="col-lg-9">
                     <div class="row">
-                        <div class="input-group col-lg-4">
+                        <div class="input-group col-lg-6">
                             <input id="vip_end" type="text" data-hex="true" class="datetimepicker" name="vip_end" value="'.$vip_end.'">
                             <span class="input-group-addon">
                                 <i class="icon-calendar-empty"></i>
@@ -487,15 +550,46 @@ class okom_vip extends Module
                     </div>                          
                 </div>
             <div class="panel-footer">
+                <button type="submit" value="1" id="submit_delete_vip" name="submit_delete_vip" class="btn btn-default pull-right">
+                    <i class="process-icon-save"></i> '.$this->l('Delete').'
+                </button>
                 <button type="submit" value="1" id="submit_edit_vip" name="submit_edit_vip" class="btn btn-default pull-right">
                     <i class="process-icon-save"></i> '.$this->l('Update').'
                 </button>
+                <button type="submit" value="1" id="submit_add_vip" name="submit_add_vip" class="btn btn-default pull-right">
+                    <i class="process-icon-save"></i> '.$this->l('Add').'
+                </button>
             </div>
-        </from>';
+        </form>';
         $html .= '</div></div></div>';
         $html .= '
         <script type="text/javascript">
-            $(document).ready(function() {          
+            $(document).ready(function() {
+
+                $("#submit_edit_vip").hide();
+                $("#submit_delete_vip").hide();
+                $("#vip_add").val(""); 
+                $("#vip_end").val(""); 
+
+                $("#id_vip").change(function() {
+
+                    if($("#id_vip").val() == 0) {
+                        $("#submit_edit_vip").hide();
+                        $("#submit_delete_vip").hide();
+                        $("#submit_add_vip").show();
+
+                    } else {
+                        $("#submit_edit_vip").show();                        
+                        $("#submit_delete_vip").show();
+                        $("#submit_add_vip").hide();                    
+                    }
+
+                    var vip_add = $("option:selected", this).attr("data-add");
+                    var vip_end = $("option:selected", this).attr("data-end");
+                    $("#vip_add").val(vip_add); 
+                    $("#vip_end").val(vip_end);                 
+                });
+
                 if ($(".datepicker").length > 0)
                     $(".datepicker").datepicker({
                         prevText: "",
@@ -546,20 +640,38 @@ class okom_vip extends Module
 
     public function getVipCards($id_customer)
     {
-        $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE id_customer = '.(int)$id_customer.' ';
-        $sql .= 'ORDER BY id_vip DESC';
+        $vip_cards = false;
+        $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE id_customer = '.(int)$id_customer.' ORDER BY id_vip DESC ';
         $result = Db::getInstance()->executeS($sql);
 
         if ($result) {
-            $is_vip = $result;
+            $vip_cards = $result;
         }
 
-        return $is_vip;
+        return $vip_cards;
+    }
+
+    public function deleteVipCard($id_vip)
+    {
+        if (Db::getInstance()->execute('DELETE FROM  `'._DB_PREFIX_.$this->table_name.'` WHERE id_vip = '.(int)$id_vip.' ')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function setExpired($id_vip)
     {
         if (Db::getInstance()->execute('UPDATE `'._DB_PREFIX_.$this->table_name.'` SET expired = 1 WHERE id_vip = '.(int)$id_vip.' ')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function setRecalled($id_vip, $recall = 1)
+    {
+        if (Db::getInstance()->execute('UPDATE `'._DB_PREFIX_.$this->table_name.'` SET recall = '.(int)$recall.' WHERE id_vip = '.(int)$id_vip.' ')) {
             return true;
         } else {
             return false;
