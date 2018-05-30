@@ -33,7 +33,7 @@ class okom_vip extends Module
         $this->name = 'okom_vip';
         $this->tab = 'other';
         $this->author = 'Okom3pom';
-        $this->version = '1.0.10';
+        $this->version = '1.0.1';
         $this->secure_key = Tools::encrypt($this->name);
         $this->bootstrap = true;
         $this->table_name = 'vip';
@@ -49,6 +49,8 @@ class okom_vip extends Module
                 `id_customer` INT (12) NOT NULL,
                 `vip_add` DATETIME NOT NULL,
                 `vip_end` DATETIME NOT NULL,
+                `recall` int(1) NOT NULL DEFAULT "0",
+                `expired` int(1) NOT NULL DEFAULT "0",
                 PRIMARY KEY (`id_vip`)
                 ) ENGINE ='._MYSQL_ENGINE_ .' DEFAULT CHARSET=utf8';
         if (!Db::getInstance()->Execute($sql)) {
@@ -649,7 +651,7 @@ class okom_vip extends Module
         return $vip_cards;
     }
 
-    public function deleteVipCardd($id_vip)
+    public function deleteVipCard($id_vip)
     {
         if (Db::getInstance()->execute('DELETE FROM  `'._DB_PREFIX_.$this->table_name.'` WHERE id_vip = '.(int)$id_vip.' ')) {
             return true;
