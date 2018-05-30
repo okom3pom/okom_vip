@@ -305,6 +305,12 @@ class okom_vip extends Module
         $order = new Order((int)Tools::getValue('id_order'));
         $customer = new Customer((int)$order->id_customer);
 
+
+        // DELETE a VIP Cards
+        if (Tools::getValue('id_vip') > 0 && Tools::isSubmit('submit_delete_vip')) {
+            $this->deleteVipCard((int)Tools::getValue('id_vip'));
+        }
+
         // ADD a VIP Cards
         if (Tools::getValue('vip_add') && Tools::getValue('vip_end') && Tools::isSubmit('submit_add_vip')) {
             // ADD to group only if vip_end > Now
@@ -449,7 +455,6 @@ class okom_vip extends Module
 
     public function hookHeader()
     {
-        $this->context->controller->addJS(_MODULE_DIR_.$this->name.'/views/js/jquery.countdown.js');
         $this->context->controller->addCSS(_MODULE_DIR_.$this->name.'/views/css/okom_vip.css');
     }
 
@@ -505,8 +510,8 @@ class okom_vip extends Module
                 <div class="col-lg-9">                  
                     <div class="row">
                         <div class="input-group col-lg-6">
-                            <select id="id_vip" class="chosen form-control" name="id_vip">
-                                <option value="0">'.$this->l('Select VIP Card').'</option>
+                            <select id="id_vip" class="form-control" name="id_vip">
+                                <option value="0">'.$this->l('Create or Select VIP Card for update').'</option>
                                 '.$option.'
                             </select>
                         </div>
@@ -543,6 +548,9 @@ class okom_vip extends Module
                     </div>                          
                 </div>
             <div class="panel-footer">
+                <button type="submit" value="1" id="submit_delete_vip" name="submit_delete_vip" class="btn btn-default pull-right">
+                    <i class="process-icon-save"></i> '.$this->l('Delete').'
+                </button>
                 <button type="submit" value="1" id="submit_edit_vip" name="submit_edit_vip" class="btn btn-default pull-right">
                     <i class="process-icon-save"></i> '.$this->l('Update').'
                 </button>
@@ -556,7 +564,24 @@ class okom_vip extends Module
         <script type="text/javascript">
             $(document).ready(function() {
 
+                $("#submit_edit_vip").hide();
+                $("#submit_delete_vip").hide();
+                $("#vip_add").val(""); 
+                $("#vip_end").val(""); 
+
                 $("#id_vip").change(function() {
+
+                    if($("#id_vip").val() == 0) {
+                        $("#submit_edit_vip").hide();
+                        $("#submit_delete_vip").hide();
+                        $("#submit_add_vip").show();
+
+                    } else {
+                        $("#submit_edit_vip").show();                        
+                        $("#submit_delete_vip").show();
+                        $("#submit_add_vip").hide();                    
+                    }
+
                     var vip_add = $("option:selected", this).attr("data-add");
                     var vip_end = $("option:selected", this).attr("data-end");
                     $("#vip_add").val(vip_add); 
@@ -622,6 +647,15 @@ class okom_vip extends Module
         }
 
         return $vip_cards;
+    }
+
+    public function deleteVipCardd($id_vip)
+    {
+        if (Db::getInstance()->execute('DELETE FROM  `'._DB_PREFIX_.$this->table_name.'` WHERE id_vip = '.(int)$id_vip.' ')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function setExpired($id_vip)
