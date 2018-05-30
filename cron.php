@@ -53,11 +53,13 @@ if (Tools::getValue('token') != Tools::encrypt('okom_vip') || !Module::isInstall
     echo 'First Recall date : '.$first_recall_date.'<br/>';
     echo 'Second Recall date : '.$second_recall_date.'<br/>';
 
+    $id_lang = (int)Configuration::get('PS_LANG_DEFAULT');
+    $iso = Language::getIsoById($id_lang);
+
+    // First Recall
     $sql = 'SELECT * FROM '._DB_PREFIX_.'vip'.' WHERE \''.$first_recall_date.'\' >= vip_end AND expired = 0 AND recall = 0';
     $recalls = Db::getInstance()->ExecuteS($sql);
 
-    $id_lang = (int)Configuration::get('PS_LANG_DEFAULT');
-    $iso = Language::getIsoById($id_lang);
 
     foreach ($recalls as $recall) {
         $customer = new Customer((int)$recall['id_customer']);
@@ -71,7 +73,7 @@ if (Tools::getValue('token') != Tools::encrypt('okom_vip') || !Module::isInstall
             if (!Mail::Send(
                 (int)Configuration::get('PS_LANG_DEFAULT'),
                 'recall',
-                Mail::l('Your VIP cards expires soon', $id_lang),
+                Mail::l('Your VIP cards expires soon 1', $id_lang),
                 $templateVars,
                 $customer->email,
                 $customer->firstname .' '.$customer->lastname,
@@ -84,7 +86,43 @@ if (Tools::getValue('token') != Tools::encrypt('okom_vip') || !Module::isInstall
                 echo 'Mail not sent to the Customer ID : '.$recall['id_customer'].'<br/>';
             } else {
                 echo 'Mail sent to the Customer ID : '.$recall['id_customer'].'<br/>';
-                $module->setRecalled((int)$recall['id_vip']);
+                $module->setRecalled((int)$recall['id_vip'], 1);
+            }
+        } else {
+            echo '<strong>No template email found</strong>';
+        }
+    }
+
+    $sql = 'SELECT * FROM '._DB_PREFIX_.'vip'.' WHERE \''.$second_recall_date.'\' >= vip_end AND expired = 0 AND recall = 1';
+    $recalls = Db::getInstance()->ExecuteS($sql);
+
+
+    foreach ($recalls as $recall) {
+        $customer = new Customer((int)$recall['id_customer']);
+        $templateVars = array(
+            '{firstname}' => $customer->firstname,
+            '{lastname}' => $customer->lastname,
+            '{expired_date}' => $recall['vip_end']
+        );
+        
+        if (file_exists(_PS_MODULE_DIR_.$module->name.'/mails/'.$iso.'/recall.txt') && file_exists(_PS_MODULE_DIR_.$module->name.'/mails/'.$iso.'/recall.html')) {
+            if (!Mail::Send(
+                (int)Configuration::get('PS_LANG_DEFAULT'),
+                'recall',
+                Mail::l('Your VIP cards expires soon 2', $id_lang),
+                $templateVars,
+                $customer->email,
+                $customer->firstname .' '.$customer->lastname,
+                Configuration::get('PS_SHOP_EMAIL'),
+                Configuration::get('PS_SHOP_NAME'),
+                null,
+                null,
+                _PS_MODULE_DIR_.$module->name.'/mails/'
+            ) ) {
+                echo 'Mail not sent to the Customer ID : '.$recall['id_customer'].'<br/>';
+            } else {
+                echo 'Mail sent to the Customer ID : '.$recall['id_customer'].'<br/>';
+                $module->setRecalled((int)$recall['id_vip'], 2);
             }
         } else {
             echo '<strong>No template email found</strong>';
