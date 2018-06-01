@@ -19,7 +19,7 @@
  *
  * @author    Okom3pom <contact@okom3pom.com>
  * @copyright 2008-2018 Okom3pom
- * @version   1.0.10
+ * @version   1.0.11
  * @license   Free
  */
 
