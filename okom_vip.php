@@ -1,7 +1,7 @@
 <?php
-/**
+
+/*
  * Module Vip Card for Prestashop 1.6.x.x
- *
  * NOTICE OF LICENSE
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -10,7 +10,6 @@
  * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
  * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
  * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
@@ -75,7 +74,7 @@ class okom_vip extends Module
             || !Configuration::updateValue('OKOM_VIP_IDORDERSTATE', '')
             || !Configuration::updateValue('OKOM_VIP_CLEAN', date('Y-m-d'))
             || !Configuration::updateValue('OKOM_VIP_NB_DAY', 365)
-            || !Configuration::updateValue('OKOM_VIP_IDPRODUCT', '') ) {
+            || !Configuration::updateValue('OKOM_VIP_IDPRODUCT', '')) {
             return false;
         }
         return true;
@@ -110,7 +109,7 @@ class okom_vip extends Module
                 $this->_postErrors[] = $this->l('You don\'t choose an id_order_state to set customer in the VIP Group');
             }
             if (!Tools::getValue('OKOM_VIP_NB_DAY')) {
-                Tools::getValue('OKOM_VIP_NB_DAY') == 365;
+                365 == Tools::getValue('OKOM_VIP_NB_DAY');
             }
         }
     }
@@ -279,7 +278,7 @@ class okom_vip extends Module
             foreach ($products as $product) {
                 //Fucking table with product_id not id_product
                 if ($product['product_id'] == $id_product_vip) {
-                    if ($this->isVIP((int)$customer->id) == false) {
+                    if (false == $this->isVIP((int)$customer->id)) {
                         $values[] = array(
                             'id_customer' => (int)$customer->id,
                             'vip_add' => date('Y-m-d'),
@@ -381,7 +380,7 @@ class okom_vip extends Module
 
         $customer_vip = $this->isVIP((int)$order->id_customer, true);
 
-        if ($customer_vip == false) {
+        if (false == $customer_vip) {
             $vip_add = '0000-00-00';
             $vip_end = '0000-00-00';
         } else {
@@ -411,7 +410,7 @@ class okom_vip extends Module
 
         if (Tools::getValue('vip_add') && Tools::getValue('vip_end')) {
             $customer_vip = $this->isVIP((int)$customer->id);
-            if ($customer_vip == false) {
+            if (false == $customer_vip) {
                 $values[] = array(
                     'id_customer' => (int)$order->id_customer,
                     'vip_add' => Tools::getValue('vip_add'),
@@ -443,7 +442,7 @@ class okom_vip extends Module
         }
         $customer_vip = $this->isVIP((int)$order->id_customer, true);
 
-        if ($customer_vip == false) {
+        if (false == $customer_vip) {
             $vip_add = '0000-00-00';
             $vip_end = '0000-00-00';
         } else {
@@ -464,7 +463,7 @@ class okom_vip extends Module
     {
         $customer_vip = $this->isVIP($this->context->customer->id, true);
 
-        if ($customer_vip == false) {
+        if (false == $customer_vip) {
             $is_vip = false;
             $exprired = true;
         } else {
@@ -624,7 +623,7 @@ class okom_vip extends Module
         $is_vip = false;
         $sql = 'SELECT * FROM '._DB_PREFIX_.$this->table_name.' WHERE id_customer = '.(int)$id_customer.' ';
 
-        if ($not_expired == true) {
+        if (true == $not_expired) {
             $sql .= 'AND expired = 0 ';
         }
 
