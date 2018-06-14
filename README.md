@@ -6,13 +6,13 @@ One on a product (the VIP card)
 
 One on a VIP Group
 
-When a customer buy a VIP card and the order change to a desired status, the customer automatically enters in the VIP Group for XX days. 
+When a customer buy a VIP card and the order change to a desired status, the customer automatically enters in the VIP Group for XX days.
 
 ## Features
 
 - Vip Cards history
 - Add Vip Cards from back office
-- All cart rule and specific price available from VIP 
+- All cart rule and specific price available from VIP
 - Count Down VIP Card
 - ShoppingCart hook to propose VIP cards
 - See TODO for next featured and bug fix
@@ -49,11 +49,11 @@ The url is available in the module configuration.
 
 ## /!\ Remove module /!\
 
-When you delete the module the vip table is not deleted, you must do it manually if you want to clear the table. 
+When you delete the module the vip table is not deleted, you must do it manually if you want to clear the table.
 
 All members of the VIP group will be removed from the group
 
-## TODO 
+## TODO
 
 - Move html and js to a tpl file
 - Check if it's a guest order
@@ -69,7 +69,7 @@ Une sur un produit ( la carte VIP )
 
 L'autre sur un Groupe VIP
 
-Quand le client achète une carte VIP et que la commande passe dans un statut souhaité, le client passe automatiquement dans le Groupe VIP pour XX jours. 
+Quand le client achète une carte VIP et que la commande passe dans un statut souhaité, le client passe automatiquement dans le Groupe VIP pour XX jours.
 
 
 ## Créer un produit Carte VIP
@@ -80,7 +80,7 @@ Quand le client achète une carte VIP et que la commande passe dans un statut so
 
 Ajouter une règle de panier avec comme condition l'id du produit de la Carte VIP et comme action FDP offert ou autre.
 
-Ajouter une règle de panier avec comme condition l'id du groupe de la Carte VIP et comme action FDP offert ou autre. 
+Ajouter une règle de panier avec comme condition l'id du groupe de la Carte VIP et comme action FDP offert ou autre.
 
 
 ## Configuration / Utilsation du Module
@@ -91,7 +91,7 @@ Ajouter l'id group Client VIP.
 
 Ajouter l'id_order_state qui passera vos clients dans le Groupe VIP.
 
-Ajouter le nombre de jours de la validité de la carte. 
+Ajouter le nombre de jours de la validité de la carte.
 
 Vous pouvez modifier les dates d'abonnement depuis une commande ou depuis la fiche client du BO.
 
@@ -107,7 +107,7 @@ L'url est disponible dans la configuration du module.
 A la suppression du module la table vip n'est pas supprimée, vous devez le faire manuellement si vous souhaitez effacer la table.
 Tous les membres du groupe VIP seront retirés du groupe
 
-## TODO 
+## TODO
 
 Déplacer le html et je js dans un fichier .tpl
 
@@ -115,7 +115,6 @@ Vérifier si ce n'est pas une commande guest
 
 Supprimer / Bloquer le produit carte vip si le client est VIP
 
-Ajouter un rappel sur les cartes qui vont expirer
 
 ## Screenshot
 
