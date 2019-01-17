@@ -368,36 +368,6 @@ class okom_vip extends Module
                 'recall' => 0
             );
             Db::getInstance()->update($this->table_name, $values, ' id_vip = '.(int)Tools::getValue('id_vip').' AND id_customer = '.(int)$order->id_customer);
-            /*
-            if ($customer_vip == false) {
-                $values[] = array(
-                    'id_customer' => (int)$order->id_customer,
-                    'vip_add' => Tools::getValue('vip_add'),
-                    'vip_end' => Tools::getValue('vip_end')
-                );
-                Db::getInstance()->insert($this->table_name, $values);
-                if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
-                    $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
-                    $customer->addGroups($id_group_vip);
-                } else {
-                    Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$order->id_customer.' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
-                    $this->setExpired((int)$customer_vip['id_vip']);
-                }
-            /*} else {
-                if (Tools::getValue('vip_end') > date('Y-m-d H:i:00')) {
-                    $id_group_vip = array((int)Configuration::get('OKOM_VIP_IDGROUP'));
-                    $customer->addGroups($id_group_vip);
-                    $values[] = array(
-                        'id_customer' => (int)$order->id_customer,
-                        'vip_add' => Tools::getValue('vip_add'),
-                        'vip_end' => Tools::getValue('vip_end')
-                    );
-                    Db::getInstance()->insert($this->table_name, $values);
-                } else {
-                    Db::getInstance()->delete('customer_group', 'id_customer = '.(int)$order->id_customer.' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP'));
-                    $this->setExpired((int)$customer_vip['id_vip']);
-                }
-            }*/
         }
 
         $customer_vip = $this->isVIP((int)$order->id_customer, true);
