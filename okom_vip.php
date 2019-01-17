@@ -32,7 +32,7 @@ class okom_vip extends Module
         $this->name = 'okom_vip';
         $this->tab = 'other';
         $this->author = 'Okom3pom';
-        $this->version = '1.0.11';
+        $this->version = '1.0.12';
         $this->secure_key = Tools::encrypt($this->name);
         $this->bootstrap = true;
         $this->table_name = 'vip';
@@ -69,7 +69,7 @@ class okom_vip extends Module
             || !$this->registerHook('displayAdminOrderLeft')
             || !$this->registerHook('actionOrderStatusUpdate')
             || !$this->registerHook('customerAccount')
-            || !$this->registerHook('adminCustomers')
+            || !$this->registerHook('displayPriceVIP')
             || !Configuration::updateValue('OKOM_VIP_IDGROUP', '')
             || !Configuration::updateValue('OKOM_VIP_IDORDERSTATE', '')
             || !Configuration::updateValue('OKOM_VIP_CLEAN', date('Y-m-d'))
@@ -399,6 +399,7 @@ class okom_vip extends Module
 
     public function hookAdminCustomers($params)
     {
+    	/*
         $customer = new Customer((int)$params['id_customer']);
 
         if ($customer && !Validate::isLoadedObject($customer)) {
@@ -452,6 +453,7 @@ class okom_vip extends Module
 
         $html = $this->printForm($vip_add, $vip_end);
         return $html;
+        */
     }
 
     public function hookHeader()
@@ -486,6 +488,28 @@ class okom_vip extends Module
             'vip_product_url' => $vip_product_url
         ));
         return $this->display(__FILE__, 'shopping-cart.tpl');
+    }
+
+    public function hookdisplayPriceVIP($params)
+    {
+        
+        $id_product = (int)Tools::getValue('id_product');
+
+        $sql = 'SELECT id_group FROM  `'._DB_PREFIX_.'specific_price` WHERE id_product = '.$id_product.' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP').' ';
+
+        $id_group = Db::getInstance()->getValue($sql);
+
+        if($id_group == (int)Configuration::get('OKOM_VIP_IDGROUP') ) {
+
+            $price = okom_vip::getPriceStatic($id_product,true);
+
+            $this->context->smarty->assign(array(
+                'price' => $price ,
+                'id_group' => $id_group
+            ));
+
+            return $this->display(__FILE__, 'product_price.tpl');
+        }
     }
 
     public function printForm($vip_add, $vip_end, $vip_cards)
@@ -675,5 +699,151 @@ class okom_vip extends Module
         } else {
             return false;
         }
+    }
+   /**
+     * Returns product price
+     *
+     * @param int      $id_product            Product id
+     * @param bool     $usetax                With taxes or not (optional)
+     * @param int|null $id_product_attribute  Product attribute id (optional).
+     *                                        If set to false, do not apply the combination price impact.
+     *                                        NULL does apply the default combination price impact.
+     * @param int      $decimals              Number of decimals (optional)
+     * @param int|null $divisor               Useful when paying many time without fees (optional)
+     * @param bool     $only_reduc            Returns only the reduction amount
+     * @param bool     $usereduc              Set if the returned amount will include reduction
+     * @param int      $quantity              Required for quantity discount application (default value: 1)
+     * @param bool     $force_associated_tax  DEPRECATED - NOT USED Force to apply the associated tax.
+     *                                        Only works when the parameter $usetax is true
+     * @param int|null $id_customer           Customer ID (for customer group reduction)
+     * @param int|null $id_cart               Cart ID. Required when the cookie is not accessible
+     *                                        (e.g., inside a payment module, a cron task...)
+     * @param int|null $id_address            Customer address ID. Required for price (tax included)
+     *                                        calculation regarding the guest localization
+     * @param null     $specific_price_output If a specific price applies regarding the previous parameters,
+     *                                        this variable is filled with the corresponding SpecificPrice object
+     * @param bool     $with_ecotax           Insert ecotax in price output.
+     * @param bool     $use_group_reduction
+     * @param Context  $context
+     * @param bool     $use_customer_price
+     * @return float                          Product price
+     */
+    public static function getPriceStatic($id_product, $usetax = true, $id_product_attribute = null, $decimals = 6, $divisor = null,
+        $only_reduc = false, $usereduc = true, $quantity = 1, $force_associated_tax = false, $id_customer = null, $id_cart = null,
+        $id_address = null, &$specific_price_output = null, $with_ecotax = true, $use_group_reduction = true, Context $context = null,
+        $use_customer_price = true)
+    {
+        if (!$context) {
+            $context = Context::getContext();
+        }
+
+        $cur_cart = $context->cart;
+
+        if ($divisor !== null) {
+            Tools::displayParameterAsDeprecated('divisor');
+        }
+
+        if (!Validate::isBool($usetax) || !Validate::isUnsignedId($id_product)) {
+            die(Tools::displayError());
+        }
+
+
+        $id_group = (int)Configuration::get('OKOM_VIP_IDGROUP');
+
+        // If there is cart in context or if the specified id_cart is different from the context cart id
+        if (!is_object($cur_cart) || (Validate::isUnsignedInt($id_cart) && $id_cart && $cur_cart->id != $id_cart)) {
+            /*
+            * When a user (e.g., guest, customer, Google...) is on PrestaShop, he has already its cart as the global (see /init.php)
+            * When a non-user calls directly this method (e.g., payment module...) is on PrestaShop, he does not have already it BUT knows the cart ID
+            * When called from the back office, cart ID can be inexistant
+            */
+            if (!$id_cart && !isset($context->employee)) {
+                die(Tools::displayError());
+            }
+            $cur_cart = new Cart($id_cart);
+            // Store cart in context to avoid multiple instantiations in BO
+            if (!Validate::isLoadedObject($context->cart)) {
+                $context->cart = $cur_cart;
+            }
+        }
+
+        $cart_quantity = 0;
+        if ((int)$id_cart) {
+            $cache_id = 'Product::getPriceStatic_'.(int)$id_product.'-'.(int)$id_cart;
+            if (!Cache::isStored($cache_id) || ($cart_quantity = Cache::retrieve($cache_id) != (int)$quantity)) {
+                $sql = 'SELECT SUM(`quantity`)
+                FROM `'._DB_PREFIX_.'cart_product`
+                WHERE `id_product` = '.(int)$id_product.'
+                AND `id_cart` = '.(int)$id_cart;
+                $cart_quantity = (int)Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql);
+                Cache::store($cache_id, $cart_quantity);
+            } else {
+                $cart_quantity = Cache::retrieve($cache_id);
+            }
+        }
+
+        $id_currency = Validate::isLoadedObject($context->currency) ? (int)$context->currency->id : (int)Configuration::get('PS_CURRENCY_DEFAULT');
+
+        // retrieve address informations
+        $id_country = (int)$context->country->id;
+        $id_state = 0;
+        $zipcode = 0;
+
+        if (!$id_address && Validate::isLoadedObject($cur_cart)) {
+            $id_address = $cur_cart->{Configuration::get('PS_TAX_ADDRESS_TYPE')};
+        }
+
+        if ($id_address) {
+            $address_infos = Address::getCountryAndState($id_address);
+            if ($address_infos['id_country']) {
+                $id_country = (int)$address_infos['id_country'];
+                $id_state = (int)$address_infos['id_state'];
+                $zipcode = $address_infos['postcode'];
+            }
+        } elseif (isset($context->customer->geoloc_id_country)) {
+            $id_country = (int)$context->customer->geoloc_id_country;
+            $id_state = (int)$context->customer->id_state;
+            $zipcode = $context->customer->postcode;
+        }
+
+        if (Tax::excludeTaxeOption()) {
+            $usetax = false;
+        }
+
+        if ($usetax != false
+            && !empty($address_infos['vat_number'])
+            && $address_infos['id_country'] != Configuration::get('VATNUMBER_COUNTRY')
+            && Configuration::get('VATNUMBER_MANAGEMENT')) {
+            $usetax = false;
+        }
+
+        if (is_null($id_customer) && Validate::isLoadedObject($context->customer)) {
+            $id_customer = $context->customer->id;
+        }
+
+        $return = Product::priceCalculation(
+            $context->shop->id,
+            $id_product,
+            $id_product_attribute,
+            $id_country,
+            $id_state,
+            $zipcode,
+            $id_currency,
+            $id_group,
+            $quantity,
+            $usetax,
+            $decimals,
+            $only_reduc,
+            $usereduc,
+            $with_ecotax,
+            $specific_price_output,
+            $use_group_reduction,
+            $id_customer,
+            $use_customer_price,
+            $id_cart,
+            $cart_quantity
+        );
+
+        return $return;
     }
 }
