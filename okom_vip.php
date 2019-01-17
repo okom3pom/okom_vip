@@ -74,6 +74,7 @@ class okom_vip extends Module
             || !Configuration::updateValue('OKOM_VIP_IDORDERSTATE', '')
             || !Configuration::updateValue('OKOM_VIP_CLEAN', date('Y-m-d'))
             || !Configuration::updateValue('OKOM_VIP_NB_DAY', 365)
+            || !Configuration::updateValue('OKOM_VIP_DISPLAY_PRICE', 1)
             || !Configuration::updateValue('OKOM_VIP_IDPRODUCT', '')) {
             return false;
         }
@@ -88,6 +89,7 @@ class okom_vip extends Module
             || !Configuration::deleteByName('OKOM_VIP_IDORDERSTATE')
             || !Configuration::deleteByName('OKOM_VIP_CLEAN')
             || !Configuration::deleteByName('OKOM_VIP_IDPRODUCT')
+            || !Configuration::deleteByName('OKOM_VIP_DISPLAY_PRICE')
             || !Configuration::deleteByName('OKOM_VIP_NB_DAY')
             || !parent::uninstall()
             ) {
@@ -121,6 +123,7 @@ class okom_vip extends Module
             Configuration::updateValue('OKOM_VIP_IDGROUP', (int)Tools::getValue('OKOM_VIP_IDGROUP'));
             Configuration::updateValue('OKOM_VIP_IDORDERSTATE', (int)Tools::getValue('OKOM_VIP_IDORDERSTATE'));
             Configuration::updateValue('OKOM_VIP_NB_DAY', (int)Tools::getValue('OKOM_VIP_NB_DAY'));
+            Configuration::updateValue('OKOM_VIP_DISPLAY_PRICE', (int)Tools::getValue('OKOM_VIP_DISPLAY_PRICE'));
         }
         // Clean Old Vip Card
         if (Tools::isSubmit('clean')) {
@@ -173,7 +176,26 @@ class okom_vip extends Module
                         'name' => 'OKOM_VIP_NB_DAY',
                         'size' => 20,
                         'desc' => $this->l('How many days customer will be VIP'),
-                    )
+                    ),
+                    array(
+                        'name' => 'OKOM_VIP_DISPLAY_PRICE',
+                        'type' => 'switch',
+                        'label' => $this->l('Activate'),
+                        'desc' => $this->l('Affiche les nouveaux prix pour les clients'),
+                        'is_bool' => true,
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => 1,
+                                'label' => $this->l('Enabled')
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => 0,
+                                'label' => $this->l('Disabled')
+                            )
+                        )
+                    ),
                 ),
                 'submit' => array(
                     'title' => $this->l('Save'),
@@ -221,7 +243,7 @@ class okom_vip extends Module
     public function getConfigFieldsValues()
     {
         $conf = Configuration::getMultiple(
-            array('OKOM_VIP_IDPRODUCT','OKOM_VIP_IDGROUP','OKOM_VIP_IDORDERSTATE','OKOM_VIP_CLEAN','OKOM_VIP_NB_DAY')
+            array('OKOM_VIP_IDPRODUCT','OKOM_VIP_IDGROUP','OKOM_VIP_IDORDERSTATE','OKOM_VIP_CLEAN','OKOM_VIP_NB_DAY','OKOM_VIP_DISPLAY_PRICE')
         );
         return $conf;
     }
@@ -493,6 +515,10 @@ class okom_vip extends Module
     public function hookdisplayPriceVIP($params)
     {
         
+        if( Configuration::get('OKOM_VIP_DISPLAY_PRICE') == 0 ) {
+            return;
+        }
+
         $id_product = (int)Tools::getValue('id_product');
 
         $sql = 'SELECT id_group FROM  `'._DB_PREFIX_.'specific_price` WHERE id_product = '.$id_product.' AND id_group = '.(int)Configuration::get('OKOM_VIP_IDGROUP').' ';
